@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.resurrection.imkb.data.model.imkb.DetailRequest
 import com.resurrection.imkb.data.model.imkb.DetailResponse
+import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.data.repository.ImkbRepository
 import com.resurrection.imkb.ui.base.BaseViewModel
 import com.resurrection.imkb.util.Resource
@@ -19,18 +20,23 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
     BaseViewModel() {
 
     private var _detail = MutableLiveData<Resource<DetailResponse>>()
-    var detail : MutableLiveData<Resource<DetailResponse>> = _detail
+    var detail: MutableLiveData<Resource<DetailResponse>> = _detail
 
 
-        fun getDetail(authStr:String,detailRequest: DetailRequest) = viewModelScope.launch{
-            imkbRepository.getRequestDetail(authStr,detailRequest)
-                .onStart {}
-                .catch {  }
-                .collect {
-                    _detail.postValue(it)
-                }
-        }
+    fun getDetail(authStr: String, detailRequest: DetailRequest) = viewModelScope.launch {
+        imkbRepository.getRequestDetail(authStr, detailRequest)
+            .onStart {}
+            .catch { }
+            .collect {
+                _detail.postValue(it)
+            }
+    }
 
-
+    fun insertFavorite(stock: Stock) = viewModelScope.launch{
+        imkbRepository.insertStock(stock)
+            .onStart {  }
+            .catch {  }
+            .collect {  }
+    }
 
 }

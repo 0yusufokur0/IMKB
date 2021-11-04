@@ -51,6 +51,11 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
             )
         }
 
+        binding.favoriteImageView.setOnClickListener {
+            // add room database
+
+        }
+
     }
 
 

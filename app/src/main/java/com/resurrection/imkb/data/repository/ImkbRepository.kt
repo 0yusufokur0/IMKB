@@ -2,10 +2,7 @@ package com.resurrection.imkb.data.repository
 
 import com.resurrection.imkb.data.model.handshake.HandshakeRequest
 import com.resurrection.imkb.data.model.handshake.HandshakeResponse
-import com.resurrection.imkb.data.model.imkb.DetailRequest
-import com.resurrection.imkb.data.model.imkb.DetailResponse
-import com.resurrection.imkb.data.model.imkb.ListRequest
-import com.resurrection.imkb.data.model.imkb.ListResponse
+import com.resurrection.imkb.data.model.imkb.*
 import com.resurrection.imkb.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +19,8 @@ interface ImkbRepository {
         authStr: String,
         detailRequest: DetailRequest
     ): Flow<Resource<DetailResponse>>
+
+    suspend fun insertStock(stock: Stock):Flow<Resource<Unit>>
 
 
 /*    // Network

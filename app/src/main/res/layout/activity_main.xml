@@ -22,6 +22,9 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="#002538"
                 android:elevation="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
                 tools:ignore="MissingConstraints">
 
@@ -40,11 +43,11 @@
                         android:background="@drawable/rounded_txt_bg"
                         android:backgroundTint="@color/search_bg"
                         android:hint="Search"
+                        android:maxLines="1"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
                         android:textColor="@color/white"
                         android:visibility="visible"
-                        android:maxLines="1"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

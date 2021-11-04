@@ -1,6 +1,5 @@
 package com.resurrection.imkb.ui.main
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import androidx.core.widget.doOnTextChanged
@@ -26,9 +25,7 @@ class MainActivity: BaseActivity<ActivityMainBinding>() {
         setSupportActionBar(findViewById(R.id.toolbar))
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.navigation_home, R.id.navigation_dashboard)
-        )
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_home, R.id.navigation_favorite))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -36,6 +33,7 @@ class MainActivity: BaseActivity<ActivityMainBinding>() {
             text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
         }
     }
+
     fun setTextChangedFun(mtextChangedFun: ((String) -> Any?)?) { textChangedFun = mtextChangedFun }
 
 

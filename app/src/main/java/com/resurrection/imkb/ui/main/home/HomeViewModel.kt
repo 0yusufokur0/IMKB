@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
             .collect { _auth.postValue(it) }
     }
 
-    fun  getResponseList(XVPAuthorization:String,request: ListRequest) = viewModelScope.launch {
+    fun  getResponseList(XVPAuthorization:String,request: ListRequest) = viewModelScope.launch{
         imkbRepository.getRequestList(XVPAuthorization,request)
             .onStart { println("on starta da kalıyor")  }
             .catch { println("view model catch de hata var") }
