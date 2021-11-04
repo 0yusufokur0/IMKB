@@ -7,4 +7,18 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="gray">#DFDFDF</color>
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="light_green">#47DDB9</color>
+    <color name="light_red">#FF7373</color>
+    <color name="yellow">#FFFF00</color>
+
+    <color name="movie_item_list_bg">#CFCFCF</color>
+    <color name="start_green">#00A8FF</color>
+    <color name="middle_blue_green">#00A7FF</color>
+    <color name="start_blue">#00A8FF</color>
+    <color name="search_bg">#BF802626</color>
+    <color name="nav_bg_middle_green">#809A2D2D</color>
 </resources>

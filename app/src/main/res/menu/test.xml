@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_all"
+        android:orderInCategory="100"
+        android:title="all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_increasing"
+        android:orderInCategory="100"
+        android:title="increasing"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_decreasing"
+        android:orderInCategory="100"
+        android:title="decreasing"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_volume30"
+        android:orderInCategory="100"
+        android:title="volume 30"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_volume50"
+        android:orderInCategory="100"
+        android:title="volume 50"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_volume100"
+        android:orderInCategory="100"
+        android:title="volume 50"
+        app:showAsAction="never" />
+</menu>
