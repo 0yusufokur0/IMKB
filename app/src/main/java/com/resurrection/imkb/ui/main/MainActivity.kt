@@ -1,7 +1,9 @@
 package com.resurrection.imkb.ui.main
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,29 +18,26 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity: BaseActivity<ActivityMainBinding>() {
     lateinit var appBarConfiguration:AppBarConfiguration
-
+    private var textChangedFun: ((String) -> Any?)? = null
 
     override fun getLayoutRes(): Int  = R.layout.activity_main
 
     override fun init(savedInstanceState: Bundle?) {
-
-
-        setContentView(binding.root)
         setSupportActionBar(findViewById(R.id.toolbar))
-
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard
-            )
+            setOf(R.id.navigation_home, R.id.navigation_dashboard)
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
+            text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
+        }
     }
+    fun setTextChangedFun(mtextChangedFun: ((String) -> Any?)?) { textChangedFun = mtextChangedFun }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.test, menu)

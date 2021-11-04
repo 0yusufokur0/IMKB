@@ -1,6 +1,5 @@
 package com.resurrection.imkb.ui.main.home
 
-
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
@@ -20,6 +19,7 @@ import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentHomeBinding
 import com.resurrection.imkb.databinding.StockItemBinding
 import com.resurrection.imkb.ui.base.BaseFragment
+import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
@@ -31,23 +31,33 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private val viewModel: HomeViewModel by viewModels()
-    private var stockPeriod = "all" /*requireArguments().getString("period", "all")*/
+    private var stockPeriod = "all"
     private var detailFragment: DetailFragment? = null
     private var handshakeResponse: HandshakeResponse? = null
-    private lateinit var stockAdapter: StockAdapter<Stock, StockItemBinding>
+    private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
     override fun getLayoutRes(): Int = R.layout.fragment_home
-
+    private var tempList  = arrayListOf<Stock>()
     override fun init(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         fetchList()
         setViewModelObserve()
-        binding.symbol.sortClick { stockAdapter.sortByItem(SYMBOL) }
-        binding.price.sortClick { stockAdapter.sortByItem(PRICE) }
-        binding.difference.sortClick { stockAdapter.sortByItem(DIFFERENCE) }
-        binding.volume.sortClick { stockAdapter.sortByItem(VOLUME) }
-        binding.bid.sortClick { stockAdapter.sortByItem(BID) }
-        binding.offer.sortClick { stockAdapter.sortByItem(OFFER) }
-        binding.change.sortClick { stockAdapter.sortByItem(CHANGE) }
+        binding.symbol.sortClick { stockAdapter?.sortByItem(SYMBOL) }
+        binding.price.sortClick { stockAdapter?.sortByItem(PRICE) }
+        binding.difference.sortClick { stockAdapter?.sortByItem(DIFFERENCE) }
+        binding.volume.sortClick { stockAdapter?.sortByItem(VOLUME) }
+        binding.bid.sortClick { stockAdapter?.sortByItem(BID) }
+        binding.offer.sortClick { stockAdapter?.sortByItem(OFFER) }
+        binding.change.sortClick { stockAdapter?.sortByItem(CHANGE) }
+
+        (requireActivity() as MainActivity).setTextChangedFun {
+            println(it)
+            it?.let { // TODO:  text i silerken  değişmiyor
+                stockAdapter?.setList(tempList)
+                stockAdapter?.filter?.filter(it)
+            }?: run {
+                // default data
+            }
+        }
     }
 
     private fun setViewModelObserve() {
@@ -73,9 +83,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 ERROR -> {
                 }
             }
-
-            println(handshake.status)
-
         })
 
 
@@ -92,7 +99,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
                         handshakeResponse?.let {
                             binding.listRecyclerView.layoutManager = layoutManager
-
+                            tempList =  listResponse.stocks as ArrayList<Stock>
                             stockAdapter =
                                 StockAdapter<Stock, StockItemBinding>(
                                     R.layout.stock_item,
@@ -104,6 +111,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                     onAdapterClick(handshakeResponse!!, stock.id.toString())
                                 }
                             binding.listRecyclerView.adapter = stockAdapter
+                            stockAdapter?.sortByItem(SYMBOL)
+                            binding.symbol.setBackgroundColor(Color.RED)
                         }
                     }
                 }
