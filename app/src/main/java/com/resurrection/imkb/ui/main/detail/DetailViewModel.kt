@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.resurrection.imkb.data.model.imkb.DetailRequest
 import com.resurrection.imkb.data.model.imkb.DetailResponse
-import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.data.repository.ImkbRepository
 import com.resurrection.imkb.ui.base.BaseViewModel
 import com.resurrection.imkb.util.Resource
@@ -20,23 +19,49 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
     BaseViewModel() {
 
     private var _detail = MutableLiveData<Resource<DetailResponse>>()
-    var detail: MutableLiveData<Resource<DetailResponse>> = _detail
+    val detail: MutableLiveData<Resource<DetailResponse>> = _detail
+    private var _isAdded = MutableLiveData<Resource<Boolean>>()
+    val isAdded: MutableLiveData<Resource<Boolean>> = _isAdded
+    private var _isDeleted = MutableLiveData<Resource<Boolean>>()
+    val isDeleted: MutableLiveData<Resource<Boolean>> = _isDeleted
 
+    private var _isFavorite = MutableLiveData<Resource<Boolean>>()
+    val isFavorite: MutableLiveData<Resource<Boolean>> = _isFavorite
 
     fun getDetail(authStr: String, detailRequest: DetailRequest) = viewModelScope.launch {
         imkbRepository.getRequestDetail(authStr, detailRequest)
-            .onStart {}
-            .catch { }
-            .collect {
-                _detail.postValue(it)
-            }
+            .onStart { _detail.postValue(Resource.Loading()) }
+            .catch { _detail.postValue(Resource.Error(it)) }
+            .collect { _detail.postValue(it) }
     }
 
-    fun insertFavorite(stock: Stock) = viewModelScope.launch{
-        imkbRepository.insertStock(stock)
-            .onStart {  }
-            .catch {  }
-            .collect {  }
+    fun insertFavorite(detailResponse: DetailResponse) = viewModelScope.launch {
+        imkbRepository.insertDetailResponse(detailResponse)
+            .onStart { _isAdded.postValue(Resource.Loading()) }
+            .catch { _isAdded.postValue(Resource.Error(it)) }
+            .collect { _isAdded.postValue(Resource.Success(true)) }
     }
+
+    fun deleteFavorite(detailResponse: DetailResponse) = viewModelScope.launch {
+        imkbRepository.removeDetailResponse(detailResponse)
+            .onStart { _isDeleted.postValue(Resource.Loading()) }
+            .catch { _isDeleted.postValue(Resource.Error(it)) }
+            .collect { _isDeleted.postValue(Resource.Success(true)) }
+    }
+    fun getFavoriteState(id:Double) = viewModelScope.launch{
+        imkbRepository.getDetailResponse(id)
+            .onStart { _isFavorite.postValue(Resource.Loading()) }
+            .catch { _isFavorite.postValue(Resource.Error(it)) }
+            .collect {
+                it.data?.let {
+                    _isFavorite.postValue(Resource.Success(true))
+                }?:run{
+                    _isFavorite.postValue(Resource.Success(false))
+                }
+            }
+
+    }
+
+
 
 }

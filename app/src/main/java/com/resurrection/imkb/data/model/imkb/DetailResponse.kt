@@ -1,9 +1,12 @@
 package com.resurrection.imkb.data.model.imkb
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.resurrection.imkb.data.model.ServiceStatus
-
+@Entity(tableName = "detail_response")
 data class DetailResponse(
+    @PrimaryKey
     @SerializedName("bid")
     val bid: Double,
     @SerializedName("channge")

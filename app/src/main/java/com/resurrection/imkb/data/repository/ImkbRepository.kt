@@ -20,7 +20,13 @@ interface ImkbRepository {
         detailRequest: DetailRequest
     ): Flow<Resource<DetailResponse>>
 
-    suspend fun insertStock(stock: Stock):Flow<Resource<Unit>>
+    suspend fun insertDetailResponse(detailResponse: DetailResponse):Flow<Resource<Unit>>
+
+    suspend fun removeDetailResponse(detailResponse: DetailResponse):Flow<Resource<Unit>>
+
+    suspend fun getDetailResponse(id:Double):Flow<Resource<DetailResponse>>
+
+    suspend fun detailResponseExists(id:Double):Flow<Resource<Boolean>>
 
 
 /*    // Network

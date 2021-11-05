@@ -10,7 +10,6 @@ import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.FragmentFavoriteBinding
 import com.resurrection.imkb.ui.base.BaseFragment
 
-
 class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
 
     override fun getLayoutRes(): Int  = R.layout.fragment_favorite

@@ -35,10 +35,21 @@ class ImkbRepositoryImpl @Inject constructor(
         emit(getResourceByNetworkRequest { imkbApiService.requestDetail(authStr, detailRequest) })
     }
 
-    override suspend fun insertStock(stock: Stock): Flow<Resource<Unit>> = flow{
-        emit(getResourceByDatabaseRequest { imkbDao.insertStock(stock) })
+    override suspend fun insertDetailResponse(detailResponse: DetailResponse): Flow<Resource<Unit>> = flow {
+        emit(getResourceByDatabaseRequest { imkbDao.insertDetailResponse(detailResponse) })
     }
 
+    override suspend fun removeDetailResponse(detailResponse: DetailResponse): Flow<Resource<Unit>> = flow{
+        emit(getResourceByDatabaseRequest { imkbDao.deleteStock(detailResponse) })
+    }
+
+    override suspend fun getDetailResponse(id: Double): Flow<Resource<DetailResponse>> = flow{
+        emit(getResourceByDatabaseRequest { imkbDao.getDetailResponse(id) })
+    }
+
+    override suspend fun detailResponseExists(id: Double): Flow<Resource<Boolean>>  = flow{
+        emit(getResourceByDatabaseRequest { imkbDao.detailResponseExists(id) })
+    }
 
 }
 

@@ -15,23 +15,25 @@ import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.DetailRequest
 import com.resurrection.imkb.data.model.imkb.DetailResponse
+import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentDetailBinding
 import com.resurrection.imkb.ui.base.BaseBottomSheetFragment
 import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.util.Status.*
+import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import javax.annotation.meta.When
 
 
 @AndroidEntryPoint
 class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
     private var favoriteState: Boolean? = false
+    private var detailResponse:DetailResponse? = null
     val entries: ArrayList<Entry> = ArrayList<Entry>()
 
-    override fun getLayoutRes(): Int {
-        return R.layout.fragment_detail
-    }
+    override fun getLayoutRes(): Int = R.layout.fragment_detail
     private lateinit var handshakeResponse: HandshakeResponse
     override fun init(savedInstanceState: Bundle?) {
         setViewModelsObserve()
@@ -49,22 +51,23 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                     )
                 )
             )
+
+
         }
 
         binding.favoriteImageView.setOnClickListener {
-            // add room database
-
+            detailResponse?.let { viewModel.insertFavorite(it) }
         }
-
     }
-
 
     private fun setViewModelsObserve() {
         viewModel.detail.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let {
-                        println(it.toString())
+                        detailResponse = it
+                        viewModel.getFavoriteState(it.bid)
+
                         var decryptedDetailResponse :DetailResponse = it
                         decryptedDetailResponse.symbol = AESFunction.decrypt(it.symbol,handshakeResponse.aesKey,handshakeResponse.aesIV)
                         binding.detailResponse = decryptedDetailResponse
@@ -90,10 +93,41 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         }
                     }
                 }
-                ERROR -> {
+                ERROR -> { }
+                LOADING -> { }
+            }
+        })
+
+        viewModel.isAdded.observe(viewLifecycleOwner, Observer {
+            when(it.status){
+                SUCCESS ->{binding.favoriteImageView.changeIconColor(true)
+                    toast(requireContext(),"added to favorite")}
+                ERROR -> { binding.favoriteImageView.changeIconColor(false)
+                    toast(requireContext(),"could not be added to favorite")}
+                LOADING -> { }
+            }
+        })
+
+        viewModel.isDeleted.observe(viewLifecycleOwner, Observer {
+            when(it.status){
+                SUCCESS ->{ binding.favoriteImageView.changeIconColor(false)
+                    toast(requireContext(),"removed to favorite")}
+                ERROR -> {binding.favoriteImageView.changeIconColor(true)
+                    toast(requireContext(),"could not be removed")}
+                LOADING -> { }
+            }
+        })
+
+        viewModel.isFavorite.observe(viewLifecycleOwner, Observer {
+            println(it.status)
+            when(it.status){
+                SUCCESS ->{ it.data?.let { binding.favoriteImageView.changeIconColor(it)
                 }
-                LOADING -> {
+                println(it.data)
+                    println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 }
+                ERROR -> { binding.favoriteImageView.changeIconColor(false) }
+                LOADING -> { }
             }
         })
 

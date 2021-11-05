@@ -1,21 +1,26 @@
 package com.resurrection.imkb.data.db.dao
 
 import androidx.room.*
+import com.resurrection.imkb.data.model.imkb.DetailResponse
 import com.resurrection.imkb.data.model.imkb.Stock
 
 @Dao
 interface ImkbDao{
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStock(stock: Stock)
+    suspend fun insertDetailResponse(detailResponse: DetailResponse)
 
     @Delete
-    suspend fun deleteStock(stock: Stock)
+    suspend fun deleteStock(detailResponse: DetailResponse)
 
-    @Query("SELECT * FROM stock")
-    suspend fun getStockFromDataBase():List<Stock>
+    @Query("SELECT * FROM detail_response")
+    suspend fun getStockFromDataBase():List<DetailResponse>
 
+    @Query("SELECT * FROM detail_response WHERE bid=:id ")
+    suspend fun getDetailResponse(id:Double):DetailResponse
 
+    @Query("SELECT EXISTS (SELECT * FROM detail_response WHERE bid = :id) LIMIT 1")
+    fun detailResponseExists(id: Double): Boolean
 }
 
 
