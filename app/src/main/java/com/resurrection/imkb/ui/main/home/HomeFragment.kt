@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -117,14 +118,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 }
                             binding.listRecyclerView.adapter = stockAdapter
                             stockAdapter?.sortByItem(SYMBOL)
-                            binding.symbol.setBackgroundColor(Color.RED)
+                            binding.symbol.setBackgroundColor(Color.parseColor("#2A7EC7"))
 
-
-                                lifecycleScope.launch {
-                                    DataStoreHelper(requireContext()).dsSave("handshakeResponse",handshakeResponse!!)
-                                }
-
-
+                            lifecycleScope.launch {
+                                DataStoreHelper(requireContext()).dsSave(
+                                    "handshakeResponse",
+                                    handshakeResponse!!
+                                )
+                            }
 
 
                         }
@@ -176,14 +177,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private fun TextView.sortClick(func: () -> Unit) {
         this.setOnClickListener {
             func()
-            binding.symbol.setBackgroundColor(Color.BLACK)
-            binding.price.setBackgroundColor(Color.BLACK)
-            binding.difference.setBackgroundColor(Color.BLACK)
-            binding.volume.setBackgroundColor(Color.BLACK)
-            binding.bid.setBackgroundColor(Color.BLACK)
-            binding.offer.setBackgroundColor(Color.BLACK)
-            binding.change.setBackgroundColor(Color.BLACK)
-            this.setBackgroundColor(Color.RED)
+            var currentColor:Int =  ContextCompat.getColor(requireContext(),R.color.light_gray)
+            binding.symbol.setBackgroundColor(currentColor)
+            binding.price.setBackgroundColor(currentColor)
+            binding.difference.setBackgroundColor(currentColor)
+            binding.volume.setBackgroundColor(currentColor)
+            binding.bid.setBackgroundColor(currentColor)
+            binding.offer.setBackgroundColor(currentColor)
+            binding.change.setBackgroundColor(currentColor)
+            this.setBackgroundColor( ContextCompat.getColor(requireContext(),R.color.blue))
         }
     }
 }

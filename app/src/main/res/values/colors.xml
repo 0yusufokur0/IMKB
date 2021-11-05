@@ -15,10 +15,21 @@
     <color name="light_red">#FF7373</color>
     <color name="yellow">#FFFF00</color>
 
+    <color name="blue">#2A7EC7</color>
     <color name="movie_item_list_bg">#CFCFCF</color>
-    <color name="start_green">#00A8FF</color>
-    <color name="middle_blue_green">#00A7FF</color>
-    <color name="start_blue">#00A8FF</color>
+    <color name="start_green">#00527D</color>
+    <color name="middle_blue_green">#006194</color>
+    <color name="start_blue">#0085CA</color>
     <color name="search_bg">#BF802626</color>
     <color name="nav_bg_middle_green">#809A2D2D</color>
+    <color name="darker_gray">#AD3C3C3C</color>
+    <color name="white_transparent">#BAFFFFFF</color>
+
+    <color name="light_gray">#929292</color>
+    <color name="gray_bg">#3C3C3C</color>
+
+    <!--
+        <color name="green">#4CAF50</color>
+    -->
+
 </resources>

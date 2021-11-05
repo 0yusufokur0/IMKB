@@ -11,8 +11,11 @@
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/stockCard"
         android:layout_width="match_parent"
         app:cardUseCompatPadding="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -23,8 +26,9 @@
             android:id="@+id/symbol"
             android:layout_width="7dp"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:gravity="start"
             android:maxLines="1"
+            android:textColor="@color/blue"
             android:layout_weight="1"
             tools:text="@{stock.symbol}" />
 
@@ -34,6 +38,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
+            android:textColor="@color/black"
             tools:text="@{Double.toString(stock.price)}" />
 
         <TextView
@@ -42,6 +47,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
+            android:textColor="@color/black"
             tools:text="@{Double.toString(stock.difference)}" />
 
         <TextView
@@ -50,6 +56,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
+            android:textColor="@color/black"
             tools:text="@{Double.toString(stock.volume).subSequence(0, 3)}" />
 
         <TextView
@@ -58,6 +65,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
+            android:textColor="@color/black"
             tools:text="@{Double.toString(stock.bid)}" />
 
         <TextView
@@ -66,6 +74,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
+            android:textColor="@color/black"
             tools:text="@{Double.toString(stock.offer)}" />
 
         <TextView
@@ -74,8 +83,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="0.7"
-            android:textColor="#4CAF50"
-            android:text="▲"
+            android:textColor="@color/black"
+
             tools:text="▲" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

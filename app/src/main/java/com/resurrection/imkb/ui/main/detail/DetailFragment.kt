@@ -1,5 +1,6 @@
 package com.resurrection.imkb.ui.main.detail
 
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
@@ -25,13 +26,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlin.math.roundToInt
 
-
 @AndroidEntryPoint
 class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
     private var detailResponse: DetailResponse? = null
     val entries: ArrayList<Entry> = ArrayList<Entry>()
-    private var favoriteState:Boolean = false
+    private var favoriteState: Boolean = false
     override fun getLayoutRes(): Int = R.layout.fragment_detail
     private lateinit var handshakeResponse: HandshakeResponse
     override fun init(savedInstanceState: Bundle?) {
@@ -52,15 +52,37 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
         }
 
         binding.favoriteImageView.setOnClickListener {
-            if (!favoriteState){
+            if (!favoriteState) {
                 detailResponse?.let {
-                    var stock:Stock = Stock(it.bid.roundToInt(),it.bid,it.difference,it.isDown,it.isUp,it.offer,it.price,it.symbol,it.volume)
-                    viewModel.insertFavorite(stock) }
-            }else{
+                    var stock: Stock = Stock(
+                        it.bid.roundToInt(),
+                        it.bid,
+                        it.difference,
+                        it.isDown,
+                        it.isUp,
+                        it.offer,
+                        it.price,
+                        it.symbol,
+                        it.volume
+                    )
+                    viewModel.insertFavorite(stock)
+                }
+            } else {
                 // remove state
                 detailResponse?.let {
-                    var stock:Stock = Stock(it.bid.roundToInt(),it.bid,it.difference,it.isDown,it.isUp,it.offer,it.price,it.symbol,it.volume)
-                    viewModel.deleteFavorite(stock) }
+                    var stock: Stock = Stock(
+                        it.bid.roundToInt(),
+                        it.bid,
+                        it.difference,
+                        it.isDown,
+                        it.isUp,
+                        it.offer,
+                        it.price,
+                        it.symbol,
+                        it.volume
+                    )
+                    viewModel.deleteFavorite(stock)
+                }
             }
         }
     }
@@ -100,6 +122,12 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                             setNoDataText("graph not found")
                             animateX(1800, Easing.EaseInExpo)
                         }
+
+                        binding.chart.axisLeft.textColor = Color.WHITE; // left y-axis
+                        binding.chart.xAxis.textColor = Color.WHITE;
+                        binding.chart.legend.textColor = Color.WHITE;
+                        binding.chart.description.textColor = Color.WHITE;
+                        binding.chart.data.setValueTextColor(Color.WHITE)
                     }
                 }
                 ERROR -> {
@@ -152,7 +180,9 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         favoriteState = it
                     }
                 }
-                ERROR -> { binding.favoriteImageView.changeIconColor(false) }
+                ERROR -> {
+                    binding.favoriteImageView.changeIconColor(false)
+                }
                 LOADING -> {
                 }
             }
@@ -160,7 +190,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
     }
 
     private infix fun ImageView.changeIconColor(isFavourite: Boolean) {
-        val color = if (isFavourite) R.color.green else R.color.red
+        val color = if (isFavourite) R.color.white else R.color.darker_gray
         this.colorFilter = PorterDuffColorFilter(
             ContextCompat.getColor(requireContext(), color),
             PorterDuff.Mode.SRC_IN
