@@ -46,6 +46,16 @@ android {
 }
 
 dependencies {
+/*    // Datastore
+    implementation("androidx.datastore:datastore-core:1.0.0")
+    implementation("androidx.datastore:datastore-preferences-core:1.0.0")
+    implementation "androidx.datastore:datastore-preferences:1.0.0"*/
+    //DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha01"
+    implementation "androidx.datastore:datastore-core:1.0.0-alpha01"
+
+
+
     //Chart
     implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'

@@ -23,14 +23,14 @@ import com.resurrection.imkb.util.Status.*
 import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
-import javax.annotation.meta.When
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
 class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
     private var favoriteState: Boolean? = false
-    private var detailResponse:DetailResponse? = null
+    private var detailResponse: DetailResponse? = null
     val entries: ArrayList<Entry> = ArrayList<Entry>()
 
     override fun getLayoutRes(): Int = R.layout.fragment_detail
@@ -52,11 +52,12 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                 )
             )
 
-
         }
 
         binding.favoriteImageView.setOnClickListener {
-            detailResponse?.let { viewModel.insertFavorite(it) }
+            detailResponse?.let {
+                var stock:Stock = Stock(it.bid.roundToInt(),it.bid,it.difference,it.isDown,it.isUp,it.offer,it.price,it.symbol,it.volume)
+                viewModel.insertFavorite(stock) }
         }
     }
 
@@ -68,8 +69,12 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         detailResponse = it
                         viewModel.getFavoriteState(it.bid)
 
-                        var decryptedDetailResponse :DetailResponse = it
-                        decryptedDetailResponse.symbol = AESFunction.decrypt(it.symbol,handshakeResponse.aesKey,handshakeResponse.aesIV)
+                        var decryptedDetailResponse: DetailResponse = it
+                        decryptedDetailResponse.symbol = AESFunction.decrypt(
+                            it.symbol,
+                            handshakeResponse.aesKey,
+                            handshakeResponse.aesIV
+                        )
                         binding.detailResponse = decryptedDetailResponse
 
                         it.graphicData.forEach { data ->
@@ -93,41 +98,58 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         }
                     }
                 }
-                ERROR -> { }
-                LOADING -> { }
+                ERROR -> {
+                }
+                LOADING -> {
+                }
             }
         })
 
         viewModel.isAdded.observe(viewLifecycleOwner, Observer {
-            when(it.status){
-                SUCCESS ->{binding.favoriteImageView.changeIconColor(true)
-                    toast(requireContext(),"added to favorite")}
-                ERROR -> { binding.favoriteImageView.changeIconColor(false)
-                    toast(requireContext(),"could not be added to favorite")}
-                LOADING -> { }
+            when (it.status) {
+                SUCCESS -> {
+                    binding.favoriteImageView.changeIconColor(true)
+                    toast(requireContext(), "added to favorite")
+                }
+                ERROR -> {
+                    binding.favoriteImageView.changeIconColor(false)
+                    toast(requireContext(), "could not be added to favorite")
+                }
+                LOADING -> {
+                }
             }
         })
 
         viewModel.isDeleted.observe(viewLifecycleOwner, Observer {
-            when(it.status){
-                SUCCESS ->{ binding.favoriteImageView.changeIconColor(false)
-                    toast(requireContext(),"removed to favorite")}
-                ERROR -> {binding.favoriteImageView.changeIconColor(true)
-                    toast(requireContext(),"could not be removed")}
-                LOADING -> { }
+            when (it.status) {
+                SUCCESS -> {
+                    binding.favoriteImageView.changeIconColor(false)
+                    toast(requireContext(), "removed to favorite")
+                }
+                ERROR -> {
+                    binding.favoriteImageView.changeIconColor(true)
+                    toast(requireContext(), "could not be removed")
+                }
+                LOADING -> {
+                }
             }
         })
 
         viewModel.isFavorite.observe(viewLifecycleOwner, Observer {
             println(it.status)
-            when(it.status){
-                SUCCESS ->{ it.data?.let { binding.favoriteImageView.changeIconColor(it)
-                }
-                println(it.data)
+            when (it.status) {
+                SUCCESS -> {
+                    it.data?.let {
+                        binding.favoriteImageView.changeIconColor(it)
+                    }
+                    println(it.data)
                     println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 }
-                ERROR -> { binding.favoriteImageView.changeIconColor(false) }
-                LOADING -> { }
+                ERROR -> {
+                    binding.favoriteImageView.changeIconColor(false)
+                }
+                LOADING -> {
+                }
             }
         })
 

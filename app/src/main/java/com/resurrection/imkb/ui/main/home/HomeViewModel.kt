@@ -18,23 +18,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val imkbRepository: ImkbRepository): BaseViewModel() {
+class HomeViewModel @Inject constructor(private val imkbRepository: ImkbRepository) :
+    BaseViewModel() {
     private var _auth = MutableLiveData<Resource<HandshakeResponse>>()
     val auth: LiveData<Resource<HandshakeResponse>> = _auth
 
     private var _listResponse = MutableLiveData<Resource<ListResponse>>()
-    var listResponse : MutableLiveData<Resource<ListResponse>> = _listResponse
+    var listResponse: MutableLiveData<Resource<ListResponse>> = _listResponse
 
-    fun getAuth(request: HandshakeRequest) = viewModelScope.launch{
+    fun getAuth(request: HandshakeRequest) = viewModelScope.launch {
         imkbRepository.getHandShake(request)
-            .onStart {  }
-            .catch {  }
+            .onStart { }
+            .catch { }
             .collect { _auth.postValue(it) }
     }
 
-    fun  getResponseList(XVPAuthorization:String,request: ListRequest) = viewModelScope.launch{
-        imkbRepository.getRequestList(XVPAuthorization,request)
-            .onStart { println("on starta da kalıyor")  }
+    fun getResponseList(XVPAuthorization: String, request: ListRequest) = viewModelScope.launch {
+        imkbRepository.getRequestList(XVPAuthorization, request)
+            .onStart { println("on starta da kalıyor") }
             .catch { println("view model catch de hata var") }
             .collect { _listResponse.postValue(it) }
     }

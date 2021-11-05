@@ -20,24 +20,14 @@ interface ImkbRepository {
         detailRequest: DetailRequest
     ): Flow<Resource<DetailResponse>>
 
-    suspend fun insertDetailResponse(detailResponse: DetailResponse):Flow<Resource<Unit>>
+    suspend fun insertDetailResponse(stock: Stock): Flow<Resource<Unit>>
 
-    suspend fun removeDetailResponse(detailResponse: DetailResponse):Flow<Resource<Unit>>
+    suspend fun removeDetailResponse(stock: Stock): Flow<Resource<Unit>>
 
-    suspend fun getDetailResponse(id:Double):Flow<Resource<DetailResponse>>
-
-    suspend fun detailResponseExists(id:Double):Flow<Resource<Boolean>>
+    suspend fun getStock(id: Double): Flow<Resource<Stock>>
 
 
-/*    // Network
-    suspend fun getMovieById(id: String, page: Int): Flow<Resource<Any>>
-    suspend fun getMovieDetail(imdbId: String): Flow<Resource<Any>>
+    suspend fun getStocks():Flow<Resource<List<Stock>>>
 
-    // Database
-    suspend fun insertMovie(movie: Any): Flow<Resource<Unit>>
-    suspend fun removeMovie(movie: Any): Flow<Resource<Unit>>
-    suspend fun getFavoriteMovies(): Flow<Resource<List<Any>>>
-    suspend fun getMovieById(imdbID: String): Flow<Resource<Any>>
-    suspend fun getMovieByTitle(title: String): Flow<Resource<List<Any>>>*/
 }
 

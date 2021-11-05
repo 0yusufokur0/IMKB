@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.resurrection.imkb.data.model.imkb.DetailRequest
 import com.resurrection.imkb.data.model.imkb.DetailResponse
+import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.data.repository.ImkbRepository
 import com.resurrection.imkb.ui.base.BaseViewModel
 import com.resurrection.imkb.util.Resource
@@ -35,33 +36,33 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
             .collect { _detail.postValue(it) }
     }
 
-    fun insertFavorite(detailResponse: DetailResponse) = viewModelScope.launch {
-        imkbRepository.insertDetailResponse(detailResponse)
+    fun insertFavorite(stock: Stock) = viewModelScope.launch {
+        imkbRepository.insertDetailResponse(stock)
             .onStart { _isAdded.postValue(Resource.Loading()) }
             .catch { _isAdded.postValue(Resource.Error(it)) }
             .collect { _isAdded.postValue(Resource.Success(true)) }
     }
 
-    fun deleteFavorite(detailResponse: DetailResponse) = viewModelScope.launch {
-        imkbRepository.removeDetailResponse(detailResponse)
+    fun deleteFavorite(stock: Stock) = viewModelScope.launch {
+        imkbRepository.removeDetailResponse(stock)
             .onStart { _isDeleted.postValue(Resource.Loading()) }
             .catch { _isDeleted.postValue(Resource.Error(it)) }
             .collect { _isDeleted.postValue(Resource.Success(true)) }
     }
-    fun getFavoriteState(id:Double) = viewModelScope.launch{
-        imkbRepository.getDetailResponse(id)
+
+    fun getFavoriteState(id: Double) = viewModelScope.launch {
+        imkbRepository.getStock(id)
             .onStart { _isFavorite.postValue(Resource.Loading()) }
             .catch { _isFavorite.postValue(Resource.Error(it)) }
             .collect {
                 it.data?.let {
                     _isFavorite.postValue(Resource.Success(true))
-                }?:run{
+                } ?: run {
                     _isFavorite.postValue(Resource.Success(false))
                 }
             }
 
     }
-
 
 
 }

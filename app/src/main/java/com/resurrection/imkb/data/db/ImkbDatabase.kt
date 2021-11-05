@@ -8,7 +8,7 @@ import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.DetailResponse
 import com.resurrection.imkb.data.model.imkb.Stock
 
-@Database(entities = [HandshakeResponse::class,DetailResponse::class], version = 1)
+@Database(entities = [Stock::class, DetailResponse::class], version = 1)
 @TypeConverters(TypeConverter::class)
 abstract class ImkbDatabase : RoomDatabase() {
     abstract fun imkbDao(): ImkbDao

@@ -29,26 +29,27 @@ class ImkbRepositoryImpl @Inject constructor(
         emit(getResourceByNetworkRequest { imkbApiService.requestList(XVPAuthorization, request) })
     }
 
-
     override suspend fun getRequestDetail(authStr: String, detailRequest: DetailRequest)
             : Flow<Resource<DetailResponse>> = flow {
         emit(getResourceByNetworkRequest { imkbApiService.requestDetail(authStr, detailRequest) })
     }
 
-    override suspend fun insertDetailResponse(detailResponse: DetailResponse): Flow<Resource<Unit>> = flow {
-        emit(getResourceByDatabaseRequest { imkbDao.insertDetailResponse(detailResponse) })
+    override suspend fun insertDetailResponse(stock: Stock): Flow<Resource<Unit>> =
+        flow {
+            emit(getResourceByDatabaseRequest { imkbDao.insertStock(stock) })
+        }
+
+    override suspend fun removeDetailResponse(stock: Stock): Flow<Resource<Unit>> =
+        flow {
+            emit(getResourceByDatabaseRequest { imkbDao.deleteStock(stock) })
+        }
+
+    override suspend fun getStock(id: Double): Flow<Resource<Stock>> = flow {
+        emit(getResourceByDatabaseRequest { imkbDao.getStock(id) })
     }
 
-    override suspend fun removeDetailResponse(detailResponse: DetailResponse): Flow<Resource<Unit>> = flow{
-        emit(getResourceByDatabaseRequest { imkbDao.deleteStock(detailResponse) })
-    }
-
-    override suspend fun getDetailResponse(id: Double): Flow<Resource<DetailResponse>> = flow{
-        emit(getResourceByDatabaseRequest { imkbDao.getDetailResponse(id) })
-    }
-
-    override suspend fun detailResponseExists(id: Double): Flow<Resource<Boolean>>  = flow{
-        emit(getResourceByDatabaseRequest { imkbDao.detailResponseExists(id) })
+    override suspend fun getStocks(): Flow<Resource<List<Stock>>> = flow {
+        emit(getResourceByDatabaseRequest { imkbDao.getStocks() })
     }
 
 }

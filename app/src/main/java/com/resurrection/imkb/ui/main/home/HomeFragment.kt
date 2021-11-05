@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.resurrection.imkb.BR
 import com.resurrection.imkb.R
@@ -24,8 +25,12 @@ import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
 import com.resurrection.imkb.util.AESFunction
+import com.resurrection.imkb.util.DataStoreHelper
+
 import com.resurrection.imkb.util.Status.*
+
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
@@ -36,7 +41,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private var handshakeResponse: HandshakeResponse? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
     override fun getLayoutRes(): Int = R.layout.fragment_home
-    private var tempList  = arrayListOf<Stock>()
+    private var tempList = arrayListOf<Stock>()
     override fun init(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         fetchList()
@@ -51,10 +56,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
         (requireActivity() as MainActivity).setTextChangedFun {
             println(it)
-            it?.let { // TODO:  text i silerken  değişmiyor
+            it.let { // TODO:  text i silerken  değişmiyor
                 stockAdapter?.setList(tempList)
                 stockAdapter?.filter?.filter(it)
-            }?: run {
+            } ?: run {
                 // default data
             }
         }
@@ -90,20 +95,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let { listResponse ->
-                        val layoutManager = LinearLayoutManager(
-                            requireContext(),
-                            LinearLayoutManager.VERTICAL,
-                            false
-                        )
+
                         var list = arrayListOf(listResponse.stocks)
 
                         handshakeResponse?.let {
-                            binding.listRecyclerView.layoutManager = layoutManager
-                            tempList =  listResponse.stocks as ArrayList<Stock>
+                            binding.listRecyclerView.layoutManager = LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.VERTICAL,
+                                false
+                            )
+                            tempList = listResponse.stocks as ArrayList<Stock>
                             stockAdapter =
                                 StockAdapter<Stock, StockItemBinding>(
                                     R.layout.stock_item,
-                                    listResponse.stocks as ArrayList<Stock>,
+                                    listResponse.stocks,
                                     BR.stock,
                                     handshakeResponse!!.aesKey,
                                     handshakeResponse!!.aesIV,
@@ -113,6 +118,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             binding.listRecyclerView.adapter = stockAdapter
                             stockAdapter?.sortByItem(SYMBOL)
                             binding.symbol.setBackgroundColor(Color.RED)
+
+
+                                lifecycleScope.launch {
+                                    DataStoreHelper(requireContext()).dsSave("handshakeResponse",handshakeResponse!!)
+                                }
+
+
+
+
                         }
                     }
                 }
@@ -158,7 +172,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         viewModel.getAuth(HandshakeRequest(id, model, manufacturer, platformName, systemVersion))
 
     }
-    private fun TextView.sortClick(func:()->Unit){
+
+    private fun TextView.sortClick(func: () -> Unit) {
         this.setOnClickListener {
             func()
             binding.symbol.setBackgroundColor(Color.BLACK)

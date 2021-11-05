@@ -19,4 +19,4 @@ data class HandshakeResponse(
     val lifeTime: String,
     @SerializedName("status")
     val status: ServiceStatus
-):Serializable
+) : Serializable
