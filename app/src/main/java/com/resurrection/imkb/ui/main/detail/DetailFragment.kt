@@ -29,15 +29,13 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
-    private var favoriteState: Boolean? = false
     private var detailResponse: DetailResponse? = null
     val entries: ArrayList<Entry> = ArrayList<Entry>()
-
+    private var favoriteState:Boolean = false
     override fun getLayoutRes(): Int = R.layout.fragment_detail
     private lateinit var handshakeResponse: HandshakeResponse
     override fun init(savedInstanceState: Bundle?) {
         setViewModelsObserve()
-        // get aesk key aes IV and id
         val id = arguments?.getString("id")
         handshakeResponse = arguments?.get("handShake") as HandshakeResponse
 
@@ -51,13 +49,19 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                     )
                 )
             )
-
         }
 
         binding.favoriteImageView.setOnClickListener {
-            detailResponse?.let {
-                var stock:Stock = Stock(it.bid.roundToInt(),it.bid,it.difference,it.isDown,it.isUp,it.offer,it.price,it.symbol,it.volume)
-                viewModel.insertFavorite(stock) }
+            if (!favoriteState){
+                detailResponse?.let {
+                    var stock:Stock = Stock(it.bid.roundToInt(),it.bid,it.difference,it.isDown,it.isUp,it.offer,it.price,it.symbol,it.volume)
+                    viewModel.insertFavorite(stock) }
+            }else{
+                // remove state
+                detailResponse?.let {
+                    var stock:Stock = Stock(it.bid.roundToInt(),it.bid,it.difference,it.isDown,it.isUp,it.offer,it.price,it.symbol,it.volume)
+                    viewModel.deleteFavorite(stock) }
+            }
         }
     }
 
@@ -110,6 +114,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                 SUCCESS -> {
                     binding.favoriteImageView.changeIconColor(true)
                     toast(requireContext(), "added to favorite")
+                    favoriteState = true
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(false)
@@ -123,8 +128,11 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
         viewModel.isDeleted.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 SUCCESS -> {
-                    binding.favoriteImageView.changeIconColor(false)
-                    toast(requireContext(), "removed to favorite")
+                    it.data?.let { data ->
+                        binding.favoriteImageView.changeIconColor(false)
+                        toast(requireContext(), "removed to favorite")
+                        favoriteState = false
+                    }
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(true)
@@ -141,18 +149,14 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                 SUCCESS -> {
                     it.data?.let {
                         binding.favoriteImageView.changeIconColor(it)
+                        favoriteState = it
                     }
-                    println(it.data)
-                    println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 }
-                ERROR -> {
-                    binding.favoriteImageView.changeIconColor(false)
-                }
+                ERROR -> { binding.favoriteImageView.changeIconColor(false) }
                 LOADING -> {
                 }
             }
         })
-
     }
 
     private infix fun ImageView.changeIconColor(isFavourite: Boolean) {
