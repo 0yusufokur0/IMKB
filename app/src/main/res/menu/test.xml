@@ -30,6 +30,6 @@
     <item
         android:id="@+id/action_volume100"
         android:orderInCategory="100"
-        android:title="volume 50"
+        android:title="volume 100"
         app:showAsAction="never" />
 </menu>
