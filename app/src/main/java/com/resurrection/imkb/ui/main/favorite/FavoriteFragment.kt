@@ -77,7 +77,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
                                 LinearLayoutManager.VERTICAL,
                                 false
                             )
-
+                            println("list size"+list.toString())
                             stockAdapter =   StockAdapter<Stock, StockItemBinding>(
                                 requireContext(),
                                 R.layout.stock_item,

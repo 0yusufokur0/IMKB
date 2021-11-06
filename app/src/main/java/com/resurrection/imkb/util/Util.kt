@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.resurrection.imkb.R
+
 
 fun isNetworkAvailable(context: Context): Boolean {
     val connectivityManager =
@@ -43,3 +43,28 @@ fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
+
+fun Any.isValid(): Boolean {
+    var isValid = true
+    val fields = this.javaClass.declaredFields
+
+    fields.forEachIndexed { i, field ->
+
+        fields[i].isAccessible = true
+
+        val value = fields[i].get(this)
+
+        Log.w(
+            "Msg", "Value of Field "
+                    + fields[i].name
+                    + " is " + value
+        )
+        if (value == 0 || value == 0.0 || value == ""|| value == null ){
+            isValid = false
+        }
+    }
+    return isValid
+}
+
+
+

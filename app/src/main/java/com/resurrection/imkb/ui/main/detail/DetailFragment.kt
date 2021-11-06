@@ -22,10 +22,11 @@ import com.resurrection.imkb.databinding.FragmentDetailBinding
 import com.resurrection.imkb.ui.base.BaseBottomSheetFragment
 import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.util.Status.*
+import com.resurrection.imkb.util.isValid
+
 import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
@@ -71,6 +72,8 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         it.volume
                     )
                     viewModel.insertFavorite(stock)
+
+
                 }
             } else {
                 // remove state
@@ -86,11 +89,14 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         it.symbol,
                         it.volume
                     )
+                    println("<<<<<<<<<<<<<<<<"+stock.bid)
                     viewModel.deleteFavorite(stock)
                 }
             }
         }
     }
+
+
 
     private fun setViewModelsObserve() {
         viewModel.detail.observe(viewLifecycleOwner, Observer {

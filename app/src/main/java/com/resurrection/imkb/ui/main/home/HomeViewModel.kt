@@ -27,10 +27,10 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
     var listResponse: MutableLiveData<Resource<ListResponse>> = _listResponse
 
     fun getAuth(request: HandshakeRequest) = viewModelScope.launch {
-        if (request.deviceId != "" && request.deviceModel != "" && request.manifacturer != "" && request.platformName != "" && request.systemVersion != "") {
+        if (request.deviceId.isNotEmpty() && request.deviceModel.isNotEmpty() && request.manifacturer.isNotEmpty() && request.platformName.isNotEmpty() && request.systemVersion.isNotEmpty()) {
             imkbRepository.getHandShake(request)
                 .onStart { _auth.postValue(Resource.Loading()) }
-                .catch { _auth.postValue(Resource.Error(Throwable("handshake response not received"))) }
+                .catch { _auth.postValue(Resource.Error(it)) }
                 .collect { _auth.postValue(it) }
         } else _auth.postValue(Resource.Error(Throwable("request parameters is empty")))
     }
@@ -39,7 +39,7 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
         if (XVPAuthorization.isNotEmpty() && request.period.isNotEmpty()) {
             imkbRepository.getRequestList(XVPAuthorization, request)
                 .onStart { _listResponse.postValue(Resource.Loading()) }
-                .catch { _listResponse.postValue(Resource.Error(Throwable("list response not received"))) }
+                .catch { _listResponse.postValue(Resource.Error(it)) }
                 .collect { _listResponse.postValue(it) }
         } else _listResponse.postValue(Resource.Error(Throwable("authorization and request parameters is empty")))
     }
