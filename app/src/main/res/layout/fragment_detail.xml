@@ -81,7 +81,7 @@
                         tools:text="günlük düşük değer" />
 
                     <TextView
-                        android:id="@+id/asdasd"
+                        android:id="@+id/change"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="▲"
@@ -167,7 +167,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <FrameLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bottom_sheet_bg"
@@ -177,13 +177,22 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
-
+                    <TextView
+                        android:id="@+id/dataNotFound"
+                        android:visibility="invisible"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="No chart data available"
+                        app:layout_constraintBottom_toBottomOf="@+id/chart"
+                        app:layout_constraintTop_toTopOf="@+id/chart"
+                        tools:layout_editor_absoluteX="15dp" />
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chart"
                         android:layout_width="match_parent"
                         android:layout_height="400dp"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-                </FrameLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

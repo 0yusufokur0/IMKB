@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -40,23 +41,27 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
         handshakeResponse = arguments?.get("handShake") as HandshakeResponse
 
         id?.let {
-            viewModel.getDetail(
-                handshakeResponse.authorization, DetailRequest(
-                    AESFunction.encrypt(
-                        requireArguments().getString("id")!!,
-                        handshakeResponse.aesKey,
-                        handshakeResponse.aesIV
+            handshakeResponse?.let {
+                viewModel.getDetail(
+                    handshakeResponse.authorization, DetailRequest(
+                        AESFunction.encrypt(
+                            id.toDouble().toInt().toString(),
+                            handshakeResponse.aesKey,
+                            handshakeResponse.aesIV
+                        )
                     )
                 )
-            )
+                println(id+"  "+handshakeResponse)
+                viewModel.getFavoriteState(id.toDouble())
+            }
         }
 
         binding.favoriteImageView.setOnClickListener {
             if (!favoriteState) {
                 detailResponse?.let {
                     var stock: Stock = Stock(
-                        it.bid.roundToInt(),
-                        it.bid,
+                        it.bid.toInt(),
+                        id!!.toDouble(),
                         it.difference,
                         it.isDown,
                         it.isUp,
@@ -71,8 +76,8 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                 // remove state
                 detailResponse?.let {
                     var stock: Stock = Stock(
-                        it.bid.roundToInt(),
-                        it.bid,
+                        it.bid.toInt(),
+                        id!!.toDouble(),
                         it.difference,
                         it.isDown,
                         it.isUp,
@@ -91,21 +96,29 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
         viewModel.detail.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 SUCCESS -> {
-                    it.data?.let {
-                        detailResponse = it
-                        viewModel.getFavoriteState(it.bid)
+                    it.data?.let { response->
+                        detailResponse = response
 
-                        var decryptedDetailResponse: DetailResponse = it
-                        decryptedDetailResponse.symbol = AESFunction.decrypt(
-                            it.symbol,
-                            handshakeResponse.aesKey,
-                            handshakeResponse.aesIV
-                        )
-                        binding.detailResponse = decryptedDetailResponse
 
-                        it.graphicData.forEach { data ->
-                            entries.add(Entry(data.day.toFloat(), data.value.toFloat()))
+                        var decryptedDetailResponse: DetailResponse = response
+                        decryptedDetailResponse.symbol?.let {
+                            decryptedDetailResponse.symbol = AESFunction.decrypt(
+                                it,
+                                handshakeResponse.aesKey,
+                                handshakeResponse.aesIV
+                            )
                         }
+
+                        binding.detailResponse = decryptedDetailResponse
+                        response.graphicData?.let {
+                            it.forEach { data ->
+                                entries.add(Entry(data.day.toFloat(), data.value.toFloat()))
+                            }
+                        }?:run {
+                            binding.chart.visibility = View.INVISIBLE
+                            binding.dataNotFound.visibility = View.VISIBLE
+                        }
+
 
                         val vl = LineDataSet(entries, "Price")
                         vl.setDrawValues(true)
@@ -165,6 +178,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(true)
                     toast(requireContext(), "could not be removed")
+                    favoriteState = true
                 }
                 LOADING -> {
                 }
@@ -178,6 +192,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                     it.data?.let {
                         binding.favoriteImageView.changeIconColor(it)
                         favoriteState = it
+                        println(">>>>>>"+favoriteState)
                     }
                 }
                 ERROR -> {

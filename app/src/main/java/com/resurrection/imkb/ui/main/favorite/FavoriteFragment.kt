@@ -15,6 +15,7 @@ import com.resurrection.imkb.databinding.FragmentFavoriteBinding
 import com.resurrection.imkb.databinding.StockItemBinding
 import com.resurrection.imkb.ui.base.BaseFragment
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
+import com.resurrection.imkb.ui.main.detail.DetailFragment
 import com.resurrection.imkb.util.DataStoreHelper
 import com.resurrection.imkb.util.Status
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +27,7 @@ import okhttp3.internal.wait
 class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     private var handshakeResponse:HandshakeResponse? = null
     private val viewModel: FavoriteViewModel by viewModels()
+    private var detailFragment: DetailFragment? = null
 
     override fun getLayoutRes(): Int = R.layout.fragment_favorite
 
@@ -57,8 +59,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
                                     handshakeResponse!!.aesIV,
                                 ) { stock ->
 
-                                 /*   onAdapterClick(handshakeResponse!!, stock.id.toString())
-*/
+                                    onAdapterClick(handshakeResponse!!, stock.bid.toString())
                                 }
                         }
 
@@ -74,6 +75,14 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
         })
     }
 
+    private fun onAdapterClick(handshakeResponse: HandshakeResponse, id: String) {
+        detailFragment = DetailFragment()
+        val bundle = Bundle()
+        bundle.putSerializable("handShake", handshakeResponse)
+        bundle.putString("id", id)
+        detailFragment!!.arguments = bundle
+        detailFragment!!.show(parentFragmentManager, "Bottom Sheet")
+    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
