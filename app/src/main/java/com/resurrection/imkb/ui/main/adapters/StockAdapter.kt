@@ -14,7 +14,6 @@ import com.resurrection.imkb.ui.base.BaseAdapter
 import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.util.AESFunction
 import java.util.*
-import kotlin.collections.ArrayList
 
 enum class SORT {
     SYMBOL,
@@ -35,6 +34,8 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
     private var aesIV: String,
     mOnItemClick: (T) -> Unit
 ) : BaseAdapter<T, viewDataBinding>(mLayoutResource, mList, mItemId, mOnItemClick), Filterable {
+    private var tempList : ArrayList<T> = currentList
+    private val constList : ArrayList<T> = currentList
     override fun onBindViewHolder(holder: BaseHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
 
@@ -99,30 +100,28 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
     }
 
 
-
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
-                if (charSearch.isEmpty()) {
-                    // default
-                    currentList = currentList
-                } else {
+                if (charSearch.isEmpty()) { }
+                else {
                     val resultList = ArrayList<Stock>()
-                    for (row in (currentList as ArrayList<Stock>)) {
+                    for (row in (constList as ArrayList<Stock>)) {
                         if (row.symbol.contains(charSearch.lowercase(Locale.ROOT))) resultList.add(row)
                         if (row.symbol.contains(charSearch.uppercase(Locale.ROOT)))  resultList.add(row)
                     }
-                    currentList = resultList as ArrayList<T>
+                    tempList = resultList as ArrayList<T>
                 }
                 val filterResults = FilterResults()
-                filterResults.values = currentList
+                filterResults.values = tempList
                 return filterResults
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                currentList = (results?.values as ArrayList<Stock>) as ArrayList<T>
+                currentList = tempList
                 notifyDataSetChanged()
             }
 

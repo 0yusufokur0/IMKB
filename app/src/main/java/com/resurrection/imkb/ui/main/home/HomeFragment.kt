@@ -116,6 +116,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 ) { stock ->
                                     onAdapterClick(handshakeResponse!!, stock.id.toString())
                                 }
+                            binding.listRecyclerView.itemAnimator = null;
+
+
                             binding.listRecyclerView.adapter = stockAdapter
                             binding.progressBar.visibility = View.INVISIBLE
                             stockAdapter?.sortByItem(SYMBOL)
