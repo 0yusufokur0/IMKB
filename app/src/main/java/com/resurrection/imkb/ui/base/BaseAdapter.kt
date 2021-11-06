@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
@@ -32,9 +33,13 @@ open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
 
     override fun getItemCount(): Int = currentList.size
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun notifyChanged(){
-        notifyDataSetChanged()
+
+
+    fun updateList(newList:ArrayList<T>){
+        val diffCallBack = BaseDiffUtil<T>(currentList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallBack)
+        diffResult.dispatchUpdatesTo(this)
+
     }
 
 
@@ -45,6 +50,24 @@ open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
             itemView.setOnClickListener { onItemClick((item)) }
         }
 
+    }
+
+    class BaseDiffUtil<T> (
+        private val oldNumbers: List<T>,
+        private val newNumbers: List<T>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldNumbers.size
+
+        override fun getNewListSize(): Int = newNumbers.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldNumbers[oldItemPosition] == newNumbers[newItemPosition]
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldNumbers[oldItemPosition] == newNumbers[newItemPosition]
+        }
     }
 }
 

@@ -76,7 +76,6 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun sortByItem(sortType: SORT) {
         if (currentList.size != 0) {
 
@@ -94,16 +93,12 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
 
                 if (mutable[0] == currentList[0]) mutable.reverse()
 
-                currentList = mutable.toList() as ArrayList<Stock> as ArrayList<T>
-                notifyDataSetChanged()
+                updateList(mutable.toList() as ArrayList<Stock> as ArrayList<T>)
             }
         }
     }
 
-    fun setList(list: ArrayList<Stock>) {
-        currentList = list as ArrayList<T>
-        notifyDataSetChanged()
-    }
+
 
     override fun getFilter(): Filter {
         return object : Filter() {

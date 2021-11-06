@@ -58,7 +58,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
         (requireActivity() as MainActivity).setTextChangedFun {
             it.let { // TODO:  text i silerken  değişmiyor
-                stockAdapter?.setList(tempList)
+                stockAdapter?.updateList(tempList)
                 stockAdapter?.filter?.filter(it)
             }
         }
