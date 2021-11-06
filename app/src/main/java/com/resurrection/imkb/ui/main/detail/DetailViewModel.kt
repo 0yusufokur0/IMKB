@@ -56,7 +56,7 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
             imkbRepository.removeDetailResponse(stock)
                 .onStart { _isDeleted.postValue(Resource.Loading()) }
                 .catch { _isDeleted.postValue(Resource.Error(it)) }
-                .collect { _isDeleted.postValue(Resource.Success(false)) }
+                .collect { _isDeleted.postValue(Resource.Success(true)) }
         } else _isDeleted.postValue(Resource.Error(Throwable("stock bid is empty")))
     }
 

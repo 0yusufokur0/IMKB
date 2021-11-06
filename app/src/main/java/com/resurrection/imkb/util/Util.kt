@@ -6,8 +6,10 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.resurrection.imkb.R
 
 
 fun isNetworkAvailable(context: Context): Boolean {
@@ -66,5 +68,7 @@ fun Any.isValid(): Boolean {
     return isValid
 }
 
-
+fun View.setCustomAnimation(anim:Int = R.anim.fall_down) {
+    this.startAnimation(AnimationUtils.loadAnimation(this.context,anim))
+}
 

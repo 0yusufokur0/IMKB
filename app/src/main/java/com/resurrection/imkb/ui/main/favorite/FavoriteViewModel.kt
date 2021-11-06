@@ -1,7 +1,6 @@
 package com.resurrection.imkb.ui.main.favorite
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.data.repository.ImkbRepository
@@ -15,15 +14,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoriteViewModel @Inject constructor(private val imkbRepository: ImkbRepository) : BaseViewModel() {
+class FavoriteViewModel @Inject constructor(private val imkbRepository: ImkbRepository) :
+    BaseViewModel() {
 
     private var _stocks = MutableLiveData<Resource<List<Stock>>>()
-    var stocks:MutableLiveData<Resource<List<Stock>>> = _stocks
+    var stocks: MutableLiveData<Resource<List<Stock>>> = _stocks
 
-    fun getStocks() = viewModelScope.launch{
+    fun getStocks() = viewModelScope.launch {
         imkbRepository.getStocks()
-            .onStart {  }
-            .catch {  }
-            .collect { _stocks.postValue(it)}
+            .onStart { }
+            .catch { }
+            .collect { _stocks.postValue(it) }
     }
 }

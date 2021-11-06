@@ -10,6 +10,7 @@ import com.resurrection.imkb.data.model.imkb.ListResponse
 import com.resurrection.imkb.data.repository.ImkbRepository
 import com.resurrection.imkb.ui.base.BaseViewModel
 import com.resurrection.imkb.util.Resource
+import com.resurrection.imkb.util.isValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -27,7 +28,7 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
     var listResponse: MutableLiveData<Resource<ListResponse>> = _listResponse
 
     fun getAuth(request: HandshakeRequest) = viewModelScope.launch {
-        if (request.deviceId.isNotEmpty() && request.deviceModel.isNotEmpty() && request.manifacturer.isNotEmpty() && request.platformName.isNotEmpty() && request.systemVersion.isNotEmpty()) {
+        if (request.isValid()) {
             imkbRepository.getHandShake(request)
                 .onStart { _auth.postValue(Resource.Loading()) }
                 .catch { _auth.postValue(Resource.Error(it)) }

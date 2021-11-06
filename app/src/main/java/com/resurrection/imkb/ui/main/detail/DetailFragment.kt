@@ -4,11 +4,9 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -22,27 +20,28 @@ import com.resurrection.imkb.databinding.FragmentDetailBinding
 import com.resurrection.imkb.ui.base.BaseBottomSheetFragment
 import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.util.Status.*
-import com.resurrection.imkb.util.isValid
-
 import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 
 @AndroidEntryPoint
 class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
+
     private val viewModel: DetailViewModel by viewModels()
-    private var detailResponse: DetailResponse? = null
-    val entries: ArrayList<Entry> = ArrayList<Entry>()
+    private var encryptedDetailResponse: DetailResponse? = null
+    private val entries: ArrayList<Entry> = ArrayList()
     private var favoriteState: Boolean = false
-    override fun getLayoutRes(): Int = R.layout.fragment_detail
     private lateinit var handshakeResponse: HandshakeResponse
+
+    override fun getLayoutRes(): Int = R.layout.fragment_detail
+
     override fun init(savedInstanceState: Bundle?) {
         setViewModelsObserve()
         val id = arguments?.getString("id")
         handshakeResponse = arguments?.get("handShake") as HandshakeResponse
 
         id?.let {
-            handshakeResponse?.let {
+            handshakeResponse.let {
                 viewModel.getDetail(
                     handshakeResponse.authorization, DetailRequest(
                         AESFunction.encrypt(
@@ -52,79 +51,52 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         )
                     )
                 )
-                println(id+"  "+handshakeResponse)
                 viewModel.getFavoriteState(id.toDouble())
             }
         }
 
         binding.favoriteImageView.setOnClickListener {
-            if (!favoriteState) {
-                detailResponse?.let {
-                    var stock: Stock = Stock(
-                        it.bid.toInt(),
-                        id!!.toDouble(),
-                        it.difference,
-                        it.isDown,
-                        it.isUp,
-                        it.offer,
-                        it.price,
-                        it.symbol,
-                        it.volume
-                    )
-                    viewModel.insertFavorite(stock)
-
-
-                }
-            } else {
-                // remove state
-                detailResponse?.let {
-                    var stock: Stock = Stock(
-                        it.bid.toInt(),
-                        id!!.toDouble(),
-                        it.difference,
-                        it.isDown,
-                        it.isUp,
-                        it.offer,
-                        it.price,
-                        it.symbol,
-                        it.volume
-                    )
-                    println("<<<<<<<<<<<<<<<<"+stock.bid)
-                    viewModel.deleteFavorite(stock)
-                }
+            encryptedDetailResponse?.let {
+                val stock = Stock(
+                    it.bid.toInt(),
+                    id!!.toDouble(),
+                    it.difference,
+                    it.isDown,
+                    it.isUp,
+                    it.offer,
+                    it.price,
+                    it.symbol,
+                    it.volume
+                )
+                if (!favoriteState) viewModel.insertFavorite(stock)
+                else viewModel.deleteFavorite(stock)
             }
         }
     }
 
-
-
     private fun setViewModelsObserve() {
-        viewModel.detail.observe(viewLifecycleOwner, Observer {
+        viewModel.detail.observe(viewLifecycleOwner, {
             when (it.status) {
                 SUCCESS -> {
-                    it.data?.let { response->
-                        detailResponse = response
+                    it.data?.let { response ->
+                        encryptedDetailResponse = response
 
-
-                        var decryptedDetailResponse: DetailResponse = response
-                        decryptedDetailResponse.symbol?.let {
+                        val decryptedDetailResponse: DetailResponse = response
+                        decryptedDetailResponse.symbol.let { symbol ->
                             decryptedDetailResponse.symbol = AESFunction.decrypt(
-                                it,
+                                symbol,
                                 handshakeResponse.aesKey,
                                 handshakeResponse.aesIV
                             )
                         }
 
                         binding.detailResponse = decryptedDetailResponse
-                        response.graphicData?.let {
-                            it.forEach { data ->
+
+                        response.graphicData.let { list ->
+                            list.forEach { data ->
                                 entries.add(Entry(data.day.toFloat(), data.value.toFloat()))
                             }
-                        }?:run {
-                            binding.chart.visibility = View.INVISIBLE
-                            binding.dataNotFound.visibility = View.VISIBLE
                         }
-
 
                         val vl = LineDataSet(entries, "Price")
                         vl.setDrawValues(true)
@@ -140,13 +112,12 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                             description.text = ""
                             setNoDataText("graph not found")
                             animateX(1800, Easing.EaseInExpo)
+                            chart.axisLeft.textColor = Color.WHITE // left y-axis
+                            chart.xAxis.textColor = Color.WHITE
+                            chart.legend.textColor = Color.WHITE
+                            chart.description.textColor = Color.WHITE
+                            chart.data.setValueTextColor(Color.WHITE)
                         }
-
-                        binding.chart.axisLeft.textColor = Color.WHITE; // left y-axis
-                        binding.chart.xAxis.textColor = Color.WHITE;
-                        binding.chart.legend.textColor = Color.WHITE;
-                        binding.chart.description.textColor = Color.WHITE;
-                        binding.chart.data.setValueTextColor(Color.WHITE)
                     }
                 }
                 ERROR -> {
@@ -156,12 +127,11 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
             }
         })
 
-        viewModel.isAdded.observe(viewLifecycleOwner, Observer {
+        viewModel.isAdded.observe(viewLifecycleOwner, {
             when (it.status) {
                 SUCCESS -> {
                     binding.favoriteImageView.changeIconColor(true)
                     toast(requireContext(), "added to favorite")
-                    favoriteState = true
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(false)
@@ -172,49 +142,42 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
             }
         })
 
-        viewModel.isDeleted.observe(viewLifecycleOwner, Observer {
+        viewModel.isDeleted.observe(viewLifecycleOwner, {
             when (it.status) {
                 SUCCESS -> {
-                    it.data?.let { data ->
                         binding.favoriteImageView.changeIconColor(false)
                         toast(requireContext(), "removed to favorite")
-                        favoriteState = false
-                    }
+
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(true)
-                    toast(requireContext(), "could not be removed")
-                    favoriteState = true
+                    toast(
+                        requireContext(),
+                        "could not be removed"
+                    ) // TODO: yukarıdan çıkan snak bar gösterilcek
+
                 }
                 LOADING -> {
                 }
             }
         })
 
-        viewModel.isFavorite.observe(viewLifecycleOwner, Observer {
-            println(it.status)
+        viewModel.isFavorite.observe(viewLifecycleOwner, {
             when (it.status) {
-                SUCCESS -> {
-                    it.data?.let {
-                        binding.favoriteImageView.changeIconColor(it)
-                        favoriteState = it
-                        println(">>>>>>"+favoriteState)
-                    }
-                }
-                ERROR -> {
-                    binding.favoriteImageView.changeIconColor(false)
-                }
-                LOADING -> {
-                }
+                SUCCESS -> binding.favoriteImageView.changeIconColor(it.data)
+                ERROR -> binding.favoriteImageView.changeIconColor(false)
             }
         })
     }
 
-    private infix fun ImageView.changeIconColor(isFavourite: Boolean) {
-        val color = if (isFavourite) R.color.white else R.color.darker_gray
-        this.colorFilter = PorterDuffColorFilter(
-            ContextCompat.getColor(requireContext(), color),
-            PorterDuff.Mode.SRC_IN
-        )
+    private infix fun ImageView.changeIconColor(isFavourite: Boolean?) {
+        isFavourite?.let {
+            val color = if (isFavourite) R.color.white else R.color.darker_gray
+            this.colorFilter = PorterDuffColorFilter(
+                ContextCompat.getColor(requireContext(), color),
+                PorterDuff.Mode.SRC_IN
+            )
+            favoriteState = isFavourite
+        }
     }
 }

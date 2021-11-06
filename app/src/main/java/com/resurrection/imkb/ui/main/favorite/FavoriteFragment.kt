@@ -3,12 +3,9 @@ package com.resurrection.imkb.ui.main.favorite
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.animation.AnimationUtils
-import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.resurrection.imkb.BR
@@ -27,14 +24,10 @@ import com.resurrection.imkb.util.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
-
-
-
 @AndroidEntryPoint
 
 class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
-    private var handshakeResponse:HandshakeResponse? = null
+    private var response: HandshakeResponse? = null
     private val viewModel: FavoriteViewModel by viewModels()
     private var detailFragment: DetailFragment? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
@@ -44,57 +37,56 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
 
     override fun init(savedInstanceState: Bundle?) {
         lifecycleScope.launch {
-            handshakeResponse = DataStoreHelper(requireContext()).dsGet<HandshakeResponse>("handshakeResponse",HandshakeResponse::class.java)
+            response = DataStoreHelper(requireContext()).dsGet<HandshakeResponse>(
+                "handshakeResponse",
+                HandshakeResponse::class.java
+            )
         }
         setHasOptionsMenu(true)
         setViewModelObserve()
         viewModel.getStocks()
+        binding.apply {
+            symbol.sortClick { stockAdapter?.sortByItem(SORT.SYMBOL) }
+            price.sortClick { stockAdapter?.sortByItem(SORT.PRICE) }
+            difference.sortClick { stockAdapter?.sortByItem(SORT.DIFFERENCE) }
+            volume.sortClick { stockAdapter?.sortByItem(SORT.VOLUME) }
+            bid.sortClick { stockAdapter?.sortByItem(SORT.BID) }
+            offer.sortClick { stockAdapter?.sortByItem(SORT.OFFER) }
+            change.sortClick { stockAdapter?.sortByItem(SORT.CHANGE) }
+        }
 
-        binding.symbol.sortClick { stockAdapter?.sortByItem(SORT.SYMBOL) }
-        binding.price.sortClick { stockAdapter?.sortByItem(SORT.PRICE) }
-        binding.difference.sortClick { stockAdapter?.sortByItem(SORT.DIFFERENCE) }
-        binding.volume.sortClick { stockAdapter?.sortByItem(SORT.VOLUME) }
-        binding.bid.sortClick { stockAdapter?.sortByItem(SORT.BID) }
-        binding.offer.sortClick { stockAdapter?.sortByItem(SORT.OFFER) }
-        binding.change.sortClick { stockAdapter?.sortByItem(SORT.CHANGE) }
 
         (requireActivity() as MainActivity).setTextChangedFun {
-            it.let { // TODO:  text i silerken  değişmiyor
+            it.let {
                 stockAdapter?.updateList(tempList)
                 stockAdapter?.filter?.filter(it)
             }
         }
-
     }
-    private fun setViewModelObserve(){
-        viewModel.stocks.observe(viewLifecycleOwner, Observer {
+
+    private fun setViewModelObserve() {
+        viewModel.stocks.observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { list ->
-                        handshakeResponse?.let {
-                            binding.listRecyclerView.layoutManager = LinearLayoutManager(
-                                requireContext(),
-                                LinearLayoutManager.VERTICAL,
-                                false
-                            )
-                            println("list size"+list.toString())
-                            stockAdapter =   StockAdapter<Stock, StockItemBinding>(
-                                requireContext(),
-                                R.layout.stock_item,
-                                list as ArrayList<Stock>,
-                                BR.stock,
-                                handshakeResponse!!.aesKey,
-                                handshakeResponse!!.aesIV,
-                            ) { stock ->
+                        response?.let {
 
-                                onAdapterClick(handshakeResponse!!, stock.bid.toString())
+                            stockAdapter = StockAdapter(
+                                requireContext(), R.layout.stock_item,
+                                list as ArrayList<Stock>, BR.stock,
+                                response!!.aesKey, response!!.aesIV,
+                            ) { stock -> onAdapterClick(response!!, stock.bid.toString()) }
+
+                            binding.listRecyclerView.apply {
+                                layoutManager = LinearLayoutManager(
+                                    requireContext(),
+                                    LinearLayoutManager.VERTICAL,
+                                    false
+                                )
+                                adapter = stockAdapter
                             }
-                            binding.listRecyclerView.adapter = stockAdapter
                         }
-
-
                     }
-
                 }
                 Status.ERROR -> {
                 }
@@ -116,14 +108,16 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     private fun TextView.sortClick(func: () -> Unit) {
         this.setOnClickListener {
             func()
-            var currentColor: Int = ContextCompat.getColor(requireContext(), R.color.light_gray)
-            binding.symbol.setBackgroundColor(currentColor)
-            binding.price.setBackgroundColor(currentColor)
-            binding.difference.setBackgroundColor(currentColor)
-            binding.volume.setBackgroundColor(currentColor)
-            binding.bid.setBackgroundColor(currentColor)
-            binding.offer.setBackgroundColor(currentColor)
-            binding.change.setBackgroundColor(currentColor)
+            val currentColor: Int = ContextCompat.getColor(requireContext(), R.color.light_gray)
+            binding.apply {
+                symbol.setBackgroundColor(currentColor)
+                price.setBackgroundColor(currentColor)
+                difference.setBackgroundColor(currentColor)
+                volume.setBackgroundColor(currentColor)
+                bid.setBackgroundColor(currentColor)
+                offer.setBackgroundColor(currentColor)
+                change.setBackgroundColor(currentColor)
+            }
             this.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue))
         }
     }

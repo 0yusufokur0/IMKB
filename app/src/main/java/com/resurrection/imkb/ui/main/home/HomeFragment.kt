@@ -11,10 +11,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import com.resurrection.imkb.BR
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.handshake.HandshakeRequest
@@ -30,9 +28,7 @@ import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
 import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.util.DataStoreHelper
-
 import com.resurrection.imkb.util.Status.*
-
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,37 +38,42 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private val viewModel: HomeViewModel by viewModels()
     private var stockPeriod = "all"
     private var detailFragment: DetailFragment? = null
-    private var handshakeResponse: HandshakeResponse? = null
+    private var response: HandshakeResponse? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
-    override fun getLayoutRes(): Int = R.layout.fragment_home
     private var tempList = arrayListOf<Stock>()
+
+    override fun getLayoutRes(): Int = R.layout.fragment_home
+
     override fun init(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         fetchList()
         setViewModelObserve()
-        binding.symbol.sortClick { stockAdapter?.sortByItem(SYMBOL) }
-        binding.price.sortClick { stockAdapter?.sortByItem(PRICE) }
-        binding.difference.sortClick { stockAdapter?.sortByItem(DIFFERENCE) }
-        binding.volume.sortClick { stockAdapter?.sortByItem(VOLUME) }
-        binding.bid.sortClick { stockAdapter?.sortByItem(BID) }
-        binding.offer.sortClick { stockAdapter?.sortByItem(OFFER) }
-        binding.change.sortClick { stockAdapter?.sortByItem(CHANGE) }
+        binding.apply {
+            symbol.sortClick { stockAdapter?.sortByItem(SYMBOL) }
+            price.sortClick { stockAdapter?.sortByItem(PRICE) }
+            difference.sortClick { stockAdapter?.sortByItem(DIFFERENCE) }
+            volume.sortClick { stockAdapter?.sortByItem(VOLUME) }
+            bid.sortClick { stockAdapter?.sortByItem(BID) }
+            offer.sortClick { stockAdapter?.sortByItem(OFFER) }
+            change.sortClick { stockAdapter?.sortByItem(CHANGE) }
+        }
+
 
         (requireActivity() as MainActivity).setTextChangedFun {
-            it.let { // TODO:  text i silerken  değişmiyor
+            it.let {
                 stockAdapter?.updateList(tempList)
                 stockAdapter?.filter?.filter(it)
             }
         }
+        binding.swipeRefreshLayout.setOnRefreshListener { fetchList() }
     }
 
     private fun setViewModelObserve() {
-        viewModel.auth.observe(this, Observer { handshake ->
+        viewModel.auth.observe(this, { handshake ->
             when (handshake.status) {
                 SUCCESS -> {
                     handshake.data?.let { handShakeData ->
-                        handshakeResponse = handShakeData
-                        println(handShakeData)
+                        response = handShakeData
                         viewModel.getResponseList(
                             handShakeData.authorization,
                             ListRequest(
@@ -83,69 +84,62 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 )
                             )
                         )
+                        binding.swipeRefreshLayout.isRefreshing = false
                     }
 
                 }
                 LOADING -> {
                 }
-                ERROR -> {
-                    Log.e("home_fragment_error",handshake.message.toString())
-                }
+                ERROR -> Log.e("home_fragment_error", handshake.message.toString())
             }
         })
 
 
-        viewModel.listResponse.observe(viewLifecycleOwner, Observer {
+        viewModel.listResponse.observe(viewLifecycleOwner, {
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let { listResponse ->
-                            if (listResponse.status.isSuccess){
-                                var list = arrayListOf(listResponse.stocks)
+                        if (listResponse.status.isSuccess) {
 
-                                handshakeResponse?.let {
-                                    binding.listRecyclerView.layoutManager = LinearLayoutManager(
-                                        requireContext(),
-                                        LinearLayoutManager.VERTICAL,
-                                        false
+                            response?.let {
+                                tempList = listResponse.stocks as ArrayList<Stock>
+                                stockAdapter =
+                                    StockAdapter(
+                                        requireContext(), R.layout.stock_item,
+                                        listResponse.stocks, BR.stock,
+                                        response!!.aesKey, response!!.aesIV,
                                     )
-                                    tempList = listResponse.stocks as ArrayList<Stock>
-                                   stockAdapter =
-                            StockAdapter<Stock, StockItemBinding>(
-                                requireContext(),
-                                R.layout.stock_item,
-                                listResponse.stocks,
-                                BR.stock,
-                                handshakeResponse!!.aesKey,
-                                handshakeResponse!!.aesIV,
-                            ) { stock ->
-                                onAdapterClick(handshakeResponse!!, stock.id.toString())
-                            }
+                                    { stock -> onAdapterClick(response!!, stock.id.toString()) }
 
-                                binding.listRecyclerView.itemAnimator = null;
+                                binding.apply {
+                                    listRecyclerView.layoutManager =
+                                        LinearLayoutManager(
+                                            requireContext(),
+                                            LinearLayoutManager.VERTICAL,
+                                            false
+                                        )
+                                    listRecyclerView.itemAnimator = null
+                                    listRecyclerView.adapter = stockAdapter
+                                    progressBar.visibility = View.INVISIBLE
+                                    symbol.setBackgroundColor(Color.parseColor("#2A7EC7"))
+                                }
 
-
-                                binding.listRecyclerView.adapter = stockAdapter
-                                binding.progressBar.visibility = View.INVISIBLE
                                 stockAdapter?.sortByItem(SYMBOL)
-                                binding.symbol.setBackgroundColor(Color.parseColor("#2A7EC7"))
 
                                 lifecycleScope.launch {
                                     DataStoreHelper(requireContext()).dsSave(
                                         "handshakeResponse",
-                                        handshakeResponse!!
+                                        response!!
                                     )
                                 }
                             }
-
-
                         }
                     }
                 }
                 LOADING -> binding.progressBar.visibility = View.VISIBLE
 
-                ERROR -> {
-                    binding.progressBar.visibility = View.INVISIBLE
-                }
+                ERROR -> binding.progressBar.visibility = View.INVISIBLE
+
             }
         })
     }
@@ -174,7 +168,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     @SuppressLint("HardwareIds")
     private fun fetchList() {
-        val id: String =
+        val id =
             Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)
         val model = Build.MODEL
         val manufacturer = Build.MANUFACTURER
@@ -182,20 +176,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         val systemVersion = Build.VERSION.INCREMENTAL
 
         viewModel.getAuth(HandshakeRequest(id, model, manufacturer, platformName, systemVersion))
-
     }
 
     private fun TextView.sortClick(func: () -> Unit) {
         this.setOnClickListener {
             func()
-            var currentColor: Int = ContextCompat.getColor(requireContext(), R.color.light_gray)
-            binding.symbol.setBackgroundColor(currentColor)
-            binding.price.setBackgroundColor(currentColor)
-            binding.difference.setBackgroundColor(currentColor)
-            binding.volume.setBackgroundColor(currentColor)
-            binding.bid.setBackgroundColor(currentColor)
-            binding.offer.setBackgroundColor(currentColor)
-            binding.change.setBackgroundColor(currentColor)
+            val currentColor: Int = ContextCompat.getColor(requireContext(), R.color.light_gray)
+            binding.apply {
+                symbol.setBackgroundColor(currentColor)
+                price.setBackgroundColor(currentColor)
+                difference.setBackgroundColor(currentColor)
+                volume.setBackgroundColor(currentColor)
+                bid.setBackgroundColor(currentColor)
+                offer.setBackgroundColor(currentColor)
+                change.setBackgroundColor(currentColor)
+            }
+
             this.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue))
         }
     }
