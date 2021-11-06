@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -13,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.resurrection.imkb.BR
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.handshake.HandshakeRequest
@@ -70,6 +72,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 SUCCESS -> {
                     handshake.data?.let { handShakeData ->
                         handshakeResponse = handShakeData
+                        println(handShakeData)
                         viewModel.getResponseList(
                             handShakeData.authorization,
                             ListRequest(
@@ -86,6 +89,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 LOADING -> {
                 }
                 ERROR -> {
+                    Log.e("home_fragment_error",handshake.message.toString())
                 }
             }
         })
@@ -95,49 +99,50 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let { listResponse ->
+                            if (listResponse.status.isSuccess){
+                                var list = arrayListOf(listResponse.stocks)
 
-                        var list = arrayListOf(listResponse.stocks)
-
-                        handshakeResponse?.let {
-                            binding.listRecyclerView.layoutManager = LinearLayoutManager(
+                                handshakeResponse?.let {
+                                    binding.listRecyclerView.layoutManager = LinearLayoutManager(
+                                        requireContext(),
+                                        LinearLayoutManager.VERTICAL,
+                                        false
+                                    )
+                                    tempList = listResponse.stocks as ArrayList<Stock>
+                                   stockAdapter =
+                            StockAdapter<Stock, StockItemBinding>(
                                 requireContext(),
-                                LinearLayoutManager.VERTICAL,
-                                false
-                            )
-                            tempList = listResponse.stocks as ArrayList<Stock>
-                            stockAdapter =
-                                StockAdapter<Stock, StockItemBinding>(
-                                    requireContext(),
-                                    R.layout.stock_item,
-                                    listResponse.stocks,
-                                    BR.stock,
-                                    handshakeResponse!!.aesKey,
-                                    handshakeResponse!!.aesIV,
-                                ) { stock ->
-                                    onAdapterClick(handshakeResponse!!, stock.id.toString())
+                                R.layout.stock_item,
+                                listResponse.stocks,
+                                BR.stock,
+                                handshakeResponse!!.aesKey,
+                                handshakeResponse!!.aesIV,
+                            ) { stock ->
+                                onAdapterClick(handshakeResponse!!, stock.id.toString())
+                            }
+
+                                binding.listRecyclerView.itemAnimator = null;
+
+
+                                binding.listRecyclerView.adapter = stockAdapter
+                                binding.progressBar.visibility = View.INVISIBLE
+                                stockAdapter?.sortByItem(SYMBOL)
+                                binding.symbol.setBackgroundColor(Color.parseColor("#2A7EC7"))
+
+                                lifecycleScope.launch {
+                                    DataStoreHelper(requireContext()).dsSave(
+                                        "handshakeResponse",
+                                        handshakeResponse!!
+                                    )
                                 }
-                            binding.listRecyclerView.itemAnimator = null;
-
-
-                            binding.listRecyclerView.adapter = stockAdapter
-                            binding.progressBar.visibility = View.INVISIBLE
-                            stockAdapter?.sortByItem(SYMBOL)
-                            binding.symbol.setBackgroundColor(Color.parseColor("#2A7EC7"))
-
-                            lifecycleScope.launch {
-                                DataStoreHelper(requireContext()).dsSave(
-                                    "handshakeResponse",
-                                    handshakeResponse!!
-                                )
                             }
 
 
                         }
                     }
                 }
-                LOADING -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
+                LOADING -> binding.progressBar.visibility = View.VISIBLE
+
                 ERROR -> {
                     binding.progressBar.visibility = View.INVISIBLE
                 }
