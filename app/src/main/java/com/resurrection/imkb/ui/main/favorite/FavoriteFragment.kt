@@ -3,6 +3,8 @@ package com.resurrection.imkb.ui.main.favorite
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.animation.AnimationUtils
+import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -16,6 +18,7 @@ import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentFavoriteBinding
 import com.resurrection.imkb.databinding.StockItemBinding
 import com.resurrection.imkb.ui.base.BaseFragment
+import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
@@ -23,7 +26,10 @@ import com.resurrection.imkb.util.DataStoreHelper
 import com.resurrection.imkb.util.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
+
+
+
+
 
 @AndroidEntryPoint
 
@@ -32,6 +38,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     private val viewModel: FavoriteViewModel by viewModels()
     private var detailFragment: DetailFragment? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
+    private var tempList = arrayListOf<Stock>()
 
     override fun getLayoutRes(): Int = R.layout.fragment_favorite
 
@@ -50,6 +57,14 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
         binding.bid.sortClick { stockAdapter?.sortByItem(SORT.BID) }
         binding.offer.sortClick { stockAdapter?.sortByItem(SORT.OFFER) }
         binding.change.sortClick { stockAdapter?.sortByItem(SORT.CHANGE) }
+
+        (requireActivity() as MainActivity).setTextChangedFun {
+            it.let { // TODO:  text i silerken  değişmiyor
+                stockAdapter?.updateList(tempList)
+                stockAdapter?.filter?.filter(it)
+            }
+        }
+
     }
     private fun setViewModelObserve(){
         viewModel.stocks.observe(viewLifecycleOwner, Observer {

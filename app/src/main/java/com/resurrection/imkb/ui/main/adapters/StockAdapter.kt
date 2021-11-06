@@ -3,6 +3,9 @@ package com.resurrection.imkb.ui.main.adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
@@ -14,6 +17,10 @@ import com.resurrection.imkb.ui.base.BaseAdapter
 import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.util.AESFunction
 import java.util.*
+import android.view.animation.ScaleAnimation
+
+
+
 
 enum class SORT {
     SYMBOL,
@@ -38,6 +45,7 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
     private val constList : ArrayList<T> = currentList
     override fun onBindViewHolder(holder: BaseHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
+        setAnimation(holder.itemView, position);
 
         try {
             (currentList as ArrayList<Stock>)[position].symbol =
@@ -126,6 +134,26 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
             }
 
         }
+    }
+
+    private var lastPosition = -1
+
+    private fun setAnimation(viewToAnimate: View, position: Int) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+            val anim = ScaleAnimation(
+                0.0f,
+                1.0f,
+                0.0f,
+                1.0f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f
+            )
+            anim.duration = 900
+
+            viewToAnimate.startAnimation(AnimationUtils.loadAnimation(context,R.anim.fall_down))
+
     }
 
 
