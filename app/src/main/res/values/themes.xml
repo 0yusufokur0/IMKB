@@ -16,6 +16,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:actionMenuTextColor">@color/black</item>
         <item name="android:textColor">@color/black</item>
+        <item name="stock_item_bg">#FFFFFF</item>
 
     </style>
 

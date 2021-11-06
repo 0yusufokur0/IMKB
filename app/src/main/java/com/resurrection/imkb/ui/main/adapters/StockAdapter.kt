@@ -1,9 +1,11 @@
 package com.resurrection.imkb.ui.main.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.imkb.Stock
@@ -25,14 +27,14 @@ enum class SORT {
 }
 
 class StockAdapter<T, viewDataBinding : ViewDataBinding>(
+    private var context: Context,
     mLayoutResource: Int,
     mList: ArrayList<T>,
     mItemId: Int,
-    aesKey: String, aesIV: String,
+    private var aesKey: String,
+    private var aesIV: String,
     mOnItemClick: (T) -> Unit
 ) : BaseAdapter<T, viewDataBinding>(mLayoutResource, mList, mItemId, mOnItemClick), Filterable {
-    var aesKey = aesKey
-    var aesIV = aesIV
     override fun onBindViewHolder(holder: BaseHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
 
@@ -44,32 +46,33 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
         var stateString = ""
         var stateTextColor = 0
 
-        if ((currentList as ArrayList<Stock>)[position].isDown) {
-            stateString = "▼"
-            stateTextColor = Color.RED
-        } else if ((currentList as ArrayList<Stock>)[position].isUp) {
-            stateString = "▲"
-            stateTextColor = Color.GREEN
-        } else {
-            stateString = "━"
-            (binding as StockItemBinding).price.setTextColor(Color.GRAY)
-            stateTextColor = Color.GRAY
+        when {
+            (currentList as ArrayList<Stock>)[position].isDown -> {
+                stateString = "▼"
+                stateTextColor = ContextCompat.getColor(context,R.color.red)
+            }
+            (currentList as ArrayList<Stock>)[position].isUp -> {
+                stateString = "▲"
+                stateTextColor = ContextCompat.getColor(context,R.color.green)
+            }
+            else -> {
+                stateString = "━"
+                (binding as StockItemBinding).price.setTextColor(Color.GRAY)
+                stateTextColor = Color.GRAY
+            }
         }
 
-
-        if ((currentList[position] as Stock).difference == 0.0){
-            stateTextColor = Color.GRAY
-            stateString = "━"
+        (binding as StockItemBinding).apply {
+            change.text = stateString
+            change.setTextColor(Color.BLACK)
+            stockCard.setCardBackgroundColor(Color.WHITE)
+            difference.setTextColor(stateTextColor)
+            volume.setTextColor(stateTextColor)
+            bid.setTextColor(stateTextColor)
+            offer.setTextColor(stateTextColor)
+            price.setTextColor(stateTextColor)
+            change.setTextColor(stateTextColor)
         }
-        (binding as StockItemBinding).change.text = stateString
-        (binding as StockItemBinding).change.setTextColor(Color.BLACK)
-        (binding as StockItemBinding).stockCard.setCardBackgroundColor(Color.WHITE)
-        (binding as StockItemBinding).difference.setTextColor(stateTextColor)
-        (binding as StockItemBinding).volume.setTextColor(stateTextColor)
-        (binding as StockItemBinding).bid.setTextColor(stateTextColor)
-        (binding as StockItemBinding).offer.setTextColor(stateTextColor)
-        (binding as StockItemBinding).price.setTextColor(stateTextColor)
-
 
     }
 
@@ -102,16 +105,6 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
         notifyDataSetChanged()
     }
 
-
-/*
-
-    private fun sort(sortType: SORT ,mutable: MutableList<Stock>): MutableList<Stock> {
-
-        return mutable
-    }
-*/
-
-
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -122,13 +115,8 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
                 } else {
                     val resultList = ArrayList<Stock>()
                     for (row in (currentList as ArrayList<Stock>)) {
-                        if (row.symbol.contains(charSearch.lowercase(Locale.ROOT))) {
-                            resultList.add(row)
-                        }
-                        if (row.symbol.contains(charSearch.uppercase(Locale.ROOT))) {
-                            resultList.add(row)
-                        }
-
+                        if (row.symbol.contains(charSearch.lowercase(Locale.ROOT))) resultList.add(row)
+                        if (row.symbol.contains(charSearch.uppercase(Locale.ROOT)))  resultList.add(row)
                     }
                     currentList = resultList as ArrayList<T>
                 }

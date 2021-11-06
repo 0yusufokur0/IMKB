@@ -49,6 +49,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
                             )
                             binding.listRecyclerView.adapter =
                                 StockAdapter<Stock, StockItemBinding>(
+                                    requireContext(),
                                     R.layout.stock_item,
                                     list as ArrayList<Stock>,
                                     BR.stock,

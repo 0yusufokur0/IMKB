@@ -108,6 +108,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             tempList = listResponse.stocks as ArrayList<Stock>
                             stockAdapter =
                                 StockAdapter<Stock, StockItemBinding>(
+                                    requireContext(),
                                     R.layout.stock_item,
                                     listResponse.stocks,
                                     BR.stock,
