@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -56,12 +57,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.change.sortClick { stockAdapter?.sortByItem(CHANGE) }
 
         (requireActivity() as MainActivity).setTextChangedFun {
-            println(it)
             it.let { // TODO:  text i silerken  değişmiyor
                 stockAdapter?.setList(tempList)
                 stockAdapter?.filter?.filter(it)
-            } ?: run {
-                // default data
             }
         }
     }
@@ -83,6 +81,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             )
                         )
                     }
+
                 }
                 LOADING -> {
                 }
@@ -118,6 +117,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                     onAdapterClick(handshakeResponse!!, stock.id.toString())
                                 }
                             binding.listRecyclerView.adapter = stockAdapter
+                            binding.progressBar.visibility = View.INVISIBLE
                             stockAdapter?.sortByItem(SYMBOL)
                             binding.symbol.setBackgroundColor(Color.parseColor("#2A7EC7"))
 
@@ -133,8 +133,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     }
                 }
                 LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
                 }
                 ERROR -> {
+                    binding.progressBar.visibility = View.INVISIBLE
                 }
             }
         })
@@ -178,7 +180,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private fun TextView.sortClick(func: () -> Unit) {
         this.setOnClickListener {
             func()
-            var currentColor:Int =  ContextCompat.getColor(requireContext(),R.color.light_gray)
+            var currentColor: Int = ContextCompat.getColor(requireContext(), R.color.light_gray)
             binding.symbol.setBackgroundColor(currentColor)
             binding.price.setBackgroundColor(currentColor)
             binding.difference.setBackgroundColor(currentColor)
@@ -186,7 +188,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             binding.bid.setBackgroundColor(currentColor)
             binding.offer.setBackgroundColor(currentColor)
             binding.change.setBackgroundColor(currentColor)
-            this.setBackgroundColor( ContextCompat.getColor(requireContext(),R.color.blue))
+            this.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue))
         }
     }
 }
