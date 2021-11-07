@@ -4,31 +4,31 @@
     <item
         android:id="@+id/action_all"
         android:orderInCategory="100"
-        android:title="All"
+        android:title="@string/all"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_increasing"
         android:orderInCategory="100"
-        android:title="Increasing"
+        android:title="@string/increasing"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_decreasing"
         android:orderInCategory="100"
-        android:title="Decreasing"
+        android:title="@string/decreasing"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_volume30"
         android:orderInCategory="100"
-        android:title="Volume 30"
+        android:title="@string/volume_30"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_volume50"
         android:orderInCategory="100"
-        android:title="Volume 50"
+        android:title="@string/volume_50"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_volume100"
         android:orderInCategory="100"
-        android:title="Volume 100"
+        android:title="@string/volume_100"
         app:showAsAction="never" />
 </menu>

@@ -48,7 +48,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), NavigationBarView.OnIt
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.test, menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 

@@ -16,4 +16,21 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="veri_park_imkb">Veri Park IMKB</string>
+    <string name="symbol">Symbol</string>
+    <string name="price">Price</string>
+    <string name="diff">Diff</string>
+    <string name="volume">Volume</string>
+    <string name="bid">Bid</string>
+    <string name="offer">Offer</string>
+    <string name="change">Change</string>
+    <string name="search">Search</string>
+    <string name="up_arrow">▲</string>
+    <string name="no_chart_data_available">No chart data available</string>
+    <string name="all">All</string>
+    <string name="increasing">Increasing</string>
+    <string name="decreasing">Decreasing</string>
+    <string name="volume_30">Volume 30</string>
+    <string name="volume_50">Volume 50</string>
+    <string name="volume_100">Volume 100</string>
+
 </resources>

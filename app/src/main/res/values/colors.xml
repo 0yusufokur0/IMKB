@@ -24,12 +24,7 @@
     <color name="nav_bg_middle_green">#809A2D2D</color>
     <color name="darker_gray">#AD3C3C3C</color>
     <color name="white_transparent">#BAFFFFFF</color>
-
     <color name="light_gray">#929292</color>
     <color name="gray_bg">#3C3C3C</color>
-
-    <!--
-        <color name="green">#4CAF50</color>
-    -->
 
 </resources>
