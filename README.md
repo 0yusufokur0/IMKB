@@ -29,6 +29,7 @@ You can track realtime stock,search for stock and add them to your favorites.
 <li><a href="https://developer.android.com/studio/build/multidex">Multidex</a></li>
 <li><a href="https://developer.android.com/training/testing/unit-testing/local-unit-tests">JUnit</a></li>
 <li><a href="https://developer.android.com/training/testing/unit-testing/local-unit-tests">Coroutines Test</a></li>
+<li><a href="https://truth.dev/">Truth</a></li>
 
 
 
