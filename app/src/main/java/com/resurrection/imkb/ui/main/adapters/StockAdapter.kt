@@ -25,6 +25,7 @@ enum class SORT {
     OFFER,
     CHANGE
 }
+
 @Suppress("UNCHECKED_CAST")
 class StockAdapter<T, viewDataBinding : ViewDataBinding>(
     private var context: Context,
@@ -108,16 +109,14 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
                 if (charSearch.isNotEmpty()) {
-                    val resultList = ArrayList<Stock>()
+
+                    val result = ArrayList<Stock>()
+
                     for (row in (constList as ArrayList<Stock>)) {
-                        if (row.symbol.contains(charSearch.lowercase(Locale.ROOT))) resultList.add(
-                            row
-                        )
-                        if (row.symbol.contains(charSearch.uppercase(Locale.ROOT))) resultList.add(
-                            row
-                        )
+                        if (row.symbol.contains(charSearch.lowercase(Locale.ROOT))) result.add(row)
+                        if (row.symbol.contains(charSearch.uppercase(Locale.ROOT))) result.add(row)
                     }
-                    tempList = resultList as ArrayList<T>
+                    tempList = result as ArrayList<T>
                 }
                 val filterResults = FilterResults()
                 filterResults.values = tempList

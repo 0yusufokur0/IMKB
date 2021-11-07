@@ -10,6 +10,7 @@ import com.resurrection.imkb.data.model.imkb.ListResponse
 import com.resurrection.imkb.data.repository.ImkbRepository
 import com.resurrection.imkb.ui.base.BaseViewModel
 import com.resurrection.imkb.util.Resource
+import com.resurrection.imkb.util.ThrowableError
 import com.resurrection.imkb.util.isValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val imkbRepository: ImkbRepository) :
     BaseViewModel() {
+
     private var _auth = MutableLiveData<Resource<HandshakeResponse>>()
     val auth: LiveData<Resource<HandshakeResponse>> = _auth
 
@@ -42,6 +44,6 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
                 .onStart { _listResponse.postValue(Resource.Loading()) }
                 .catch { _listResponse.postValue(Resource.Error(it)) }
                 .collect { _listResponse.postValue(it) }
-        } else _listResponse.postValue(Resource.Error(Throwable("authorization and request parameters is empty")))
+        } else _listResponse.postValue(Resource.Error(ThrowableError("authorization and request parameters is empty")))
     }
 }

@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -26,8 +25,7 @@ import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
-import com.resurrection.imkb.util.AESFunction
-import com.resurrection.imkb.util.DataStoreHelper
+import com.resurrection.imkb.util.*
 import com.resurrection.imkb.util.Status.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -88,9 +86,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     }
 
                 }
-                LOADING -> {
-                }
-                ERROR -> Log.e("home_fragment_error", handshake.message.toString())
+                LOADING -> binding.progressBar.visibility = View.VISIBLE
+
+                ERROR -> ThrowableError(handshake.message.toString())
             }
         })
 
@@ -105,10 +103,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 tempList = listResponse.stocks as ArrayList<Stock>
                                 stockAdapter =
                                     StockAdapter(
-                                        requireContext(), R.layout.stock_item,
-                                        listResponse.stocks, BR.stock,
-                                        response!!.aesKey, response!!.aesIV,
-                                    )
+                                        requireContext(), R.layout.stock_item, listResponse.stocks,
+                                        BR.stock, response!!.aesKey, response!!.aesIV,)
                                     { stock -> onAdapterClick(response!!, stock.id.toString()) }
 
                                 binding.apply {
@@ -118,6 +114,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                             LinearLayoutManager.VERTICAL,
                                             false
                                         )
+
                                     listRecyclerView.itemAnimator = null
                                     listRecyclerView.adapter = stockAdapter
                                     progressBar.visibility = View.INVISIBLE
@@ -168,14 +165,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     @SuppressLint("HardwareIds")
     private fun fetchList() {
-        val id =
-            Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)
-        val model = Build.MODEL
-        val manufacturer = Build.MANUFACTURER
-        val platformName = Build.MODEL
-        val systemVersion = Build.VERSION.INCREMENTAL
+        if (true) {
+            val id =
+                Settings.Secure.getString(
+                    requireContext().contentResolver,
+                    Settings.Secure.ANDROID_ID
+                )
+            val model = Build.MODEL
+            val manufacturer = Build.MANUFACTURER
+            val platformName = Build.MODEL
+            val systemVersion = Build.VERSION.INCREMENTAL
 
-        viewModel.getAuth(HandshakeRequest(id, model, manufacturer, platformName, systemVersion))
+            viewModel.getAuth(
+                HandshakeRequest(
+                    id,
+                    model,
+                    manufacturer,
+                    platformName,
+                    systemVersion
+                )
+            )
+        } else toast(requireContext(), "Network is not available")
+
     }
 
     private fun TextView.sortClick(func: () -> Unit) {

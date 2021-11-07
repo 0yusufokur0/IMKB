@@ -33,26 +33,26 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
     val isFavorite: MutableLiveData<Resource<Boolean>> = _isFavorite
 
     fun getDetail(authStr: String, detailRequest: DetailRequest) = viewModelScope.launch {
-        if (detailRequest.isValid()&& authStr != ""){
+        if (detailRequest.isValid() && authStr != "") {
             imkbRepository.getRequestDetail(authStr, detailRequest)
                 .onStart { _detail.postValue(Resource.Loading()) }
                 .catch { _detail.postValue(Resource.Error(it)) }
                 .collect { _detail.postValue(it) }
-        }else _detail.postValue(Resource.Error(Throwable("request id is empty")))
+        } else _detail.postValue(Resource.Error(Throwable("request id is empty")))
     }
 
     fun insertFavorite(stock: Stock) = viewModelScope.launch {
-        if (stock.bid.isValid()){
+        if (stock.bid.isValid()) {
             imkbRepository.insertDetailResponse(stock)
                 .onStart { _isAdded.postValue(Resource.Loading()) }
                 .catch { _isAdded.postValue(Resource.Error(it)) }
                 .collect { _isAdded.postValue(Resource.Success(true)) }
-        }else _isAdded.postValue(Resource.Error(Throwable("stock bid is empty")))
+        } else _isAdded.postValue(Resource.Error(Throwable("stock bid is empty")))
     }
 
     fun deleteFavorite(stock: Stock) = viewModelScope.launch {
-        Log.d("Msg",stock.bid.toString())
-        if (stock.bid.isValid()){
+        Log.d("Msg", stock.bid.toString())
+        if (stock.bid.isValid()) {
             imkbRepository.removeDetailResponse(stock)
                 .onStart { _isDeleted.postValue(Resource.Loading()) }
                 .catch { _isDeleted.postValue(Resource.Error(it)) }
@@ -61,18 +61,18 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
     }
 
     fun getFavoriteState(id: Double) = viewModelScope.launch {
-            if (id.isValid()){
-                imkbRepository.getStock(id)
-                    .onStart { _isFavorite.postValue(Resource.Loading()) }
-                    .catch { _isFavorite.postValue(Resource.Error(it)) }
-                    .collect {
-                        it.data?.let {
-                            _isFavorite.postValue(Resource.Success(true))
-                        } ?: run {
-                            _isFavorite.postValue(Resource.Success(false))
-                        }
+        if (id.isValid()) {
+            imkbRepository.getStock(id)
+                .onStart { _isFavorite.postValue(Resource.Loading()) }
+                .catch { _isFavorite.postValue(Resource.Error(it)) }
+                .collect {
+                    it.data?.let {
+                        _isFavorite.postValue(Resource.Success(true))
+                    } ?: run {
+                        _isFavorite.postValue(Resource.Success(false))
                     }
-            } else _isFavorite.postValue(Resource.Error(Throwable("id is empty")))
+                }
+        } else _isFavorite.postValue(Resource.Error(Throwable("id is empty")))
     }
 
 

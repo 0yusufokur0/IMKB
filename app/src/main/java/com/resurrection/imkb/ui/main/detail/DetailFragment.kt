@@ -20,6 +20,7 @@ import com.resurrection.imkb.databinding.FragmentDetailBinding
 import com.resurrection.imkb.ui.base.BaseBottomSheetFragment
 import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.util.Status.*
+import com.resurrection.imkb.util.ThrowableError
 import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
@@ -68,6 +69,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                     it.symbol,
                     it.volume
                 )
+
                 if (!favoriteState) viewModel.insertFavorite(stock)
                 else viewModel.deleteFavorite(stock)
             }
@@ -79,15 +81,14 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let { response ->
-                        encryptedDetailResponse = response
 
+                        encryptedDetailResponse = response
                         val decryptedDetailResponse: DetailResponse = response
-                        decryptedDetailResponse.symbol.let { symbol ->
-                            decryptedDetailResponse.symbol = AESFunction.decrypt(
-                                symbol,
-                                handshakeResponse.aesKey,
-                                handshakeResponse.aesIV
-                            )
+
+                        response.symbol.let { symbol ->
+                            decryptedDetailResponse.symbol =
+                                AESFunction.decrypt(symbol, handshakeResponse.aesKey,
+                                handshakeResponse.aesIV)
                         }
 
                         binding.detailResponse = decryptedDetailResponse
@@ -121,9 +122,10 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                     }
                 }
                 ERROR -> {
+                    ThrowableError(it.message.toString())
+                    toast(requireContext(),"Failed to load data")
                 }
-                LOADING -> {
-                }
+                LOADING -> { }
             }
         })
 
@@ -137,28 +139,23 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                     binding.favoriteImageView.changeIconColor(false)
                     toast(requireContext(), "could not be added to favorite")
                 }
-                LOADING -> {
-                }
+                LOADING -> { }
             }
         })
 
         viewModel.isDeleted.observe(viewLifecycleOwner, {
             when (it.status) {
                 SUCCESS -> {
-                        binding.favoriteImageView.changeIconColor(false)
-                        toast(requireContext(), "removed to favorite")
+                    binding.favoriteImageView.changeIconColor(false)
+                    toast(requireContext(), "removed to favorite")
 
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(true)
-                    toast(
-                        requireContext(),
-                        "could not be removed"
-                    ) // TODO: yukarıdan çıkan snak bar gösterilcek
+                    toast(requireContext(), "could not be removed")
 
                 }
-                LOADING -> {
-                }
+                LOADING -> { }
             }
         })
 
@@ -166,6 +163,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
             when (it.status) {
                 SUCCESS -> binding.favoriteImageView.changeIconColor(it.data)
                 ERROR -> binding.favoriteImageView.changeIconColor(false)
+                LOADING -> { }
             }
         })
     }

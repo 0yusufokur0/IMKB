@@ -21,11 +21,12 @@ import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
 import com.resurrection.imkb.util.DataStoreHelper
 import com.resurrection.imkb.util.Status
+import com.resurrection.imkb.util.ThrowableError
+import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-
 class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     private var response: HandshakeResponse? = null
     private val viewModel: FavoriteViewModel by viewModels()
@@ -45,6 +46,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
         setHasOptionsMenu(true)
         setViewModelObserve()
         viewModel.getStocks()
+
         binding.apply {
             symbol.sortClick { stockAdapter?.sortByItem(SORT.SYMBOL) }
             price.sortClick { stockAdapter?.sortByItem(SORT.PRICE) }
@@ -72,10 +74,10 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
                         response?.let {
 
                             stockAdapter = StockAdapter(
-                                requireContext(), R.layout.stock_item,
-                                list as ArrayList<Stock>, BR.stock,
-                                response!!.aesKey, response!!.aesIV,
-                            ) { stock -> onAdapterClick(response!!, stock.bid.toString()) }
+                                requireContext(), R.layout.stock_item, list as ArrayList<Stock>,
+                                BR.stock, response!!.aesKey, response!!.aesIV,
+                            )
+                            { stock -> onAdapterClick(response!!, stock.bid.toString()) }
 
                             binding.listRecyclerView.apply {
                                 layoutManager = LinearLayoutManager(
@@ -88,10 +90,8 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
                         }
                     }
                 }
-                Status.ERROR -> {
-                }
-                Status.LOADING -> {
-                }
+                Status.ERROR -> ThrowableError(it.message.toString())
+                Status.LOADING -> toast(requireContext(),"loading...")
             }
         })
     }
