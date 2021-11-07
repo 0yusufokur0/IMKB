@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/drawable/bottom_nav_icon_color_selector.xml" value="0.3830769230769231" />
         <entry key="app/src/main/res/drawable/ic_star_clicked.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3671794871794872" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.3671794871794872" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.3729166666666667" />
         <entry key="app/src/main/res/layout/fragment_favorite.xml" value="0.209375" />
@@ -18,6 +19,8 @@
         <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.3729166666666667" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.3729166666666667" />
         <entry key="app/src/main/res/menu/test.xml" value="0.3671794871794872" />
+        <entry key="app/src/main/res/xml/activity_splash_xml_motion_layout_scene.xml" value="0.3729166666666667" />
+        <entry key="app/src/main/res/xml/activity_splash_xml_text_scene.xml" value="0.3729166666666667" />
       </map>
     </option>
   </component>

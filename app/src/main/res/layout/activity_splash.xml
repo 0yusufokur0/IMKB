@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/motion_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutDescription="@xml/activity_splash_xml_motion_layout_scene"
+            tools:context=".Activity_Splash_Login">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
+            <TextView
+                android:id="@+id/imkb_text"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="232dp"
+                android:contentDescription="@xml/activity_splash_xml_text_scene"
+                android:gravity="center"
+                android:padding="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/imkb_icon"
+                android:text="@string/veri_park_imkb"
+                android:textSize="20sp"
+                app:layout_constraintTop_toBottomOf="@+id/imkb_icon"
+                tools:layout_editor_absoluteX="373dp" />
+
+            <ImageView
+                android:id="@+id/imkb_icon"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@xml/activity_splash_xml_motion_layout_scene"
+                android:scaleType="centerInside"
+                android:src="@drawable/imkb_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+    </RelativeLayout>
+</layout>
