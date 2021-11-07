@@ -16,6 +16,7 @@ import com.google.android.material.navigation.NavigationBarView
 import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivityMainBinding
 import com.resurrection.imkb.ui.base.BaseActivity
+import com.resurrection.imkb.util.changeStatusBarColor
 import com.resurrection.imkb.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,6 +29,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), NavigationBarView.OnIt
     override fun getLayoutRes(): Int = R.layout.activity_main
 
     override fun init(savedInstanceState: Bundle?) {
+        this.changeStatusBarColor(R.color.black)
         setSupportActionBar(findViewById(R.id.toolbar))
         val navView: BottomNavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_activity_main)

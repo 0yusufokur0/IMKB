@@ -74,6 +74,14 @@ fun Activity.changeStatusBarColor(color: Int = R.color.black) {
     window.statusBarColor = ContextCompat.getColor(this, color)
 }
 
+fun tryCatch(func:()->Unit){
+    try {
+        func()
+    }catch (e:Exception){
+        ThrowableError(e.toString())
+    }
+}
+
 class ThrowableError(msg:String):Throwable(msg){
     init { Log.e("ThrowableError",msg) }
 }

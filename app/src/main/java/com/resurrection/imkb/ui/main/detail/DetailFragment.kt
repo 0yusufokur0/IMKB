@@ -22,6 +22,7 @@ import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.util.Status.*
 import com.resurrection.imkb.util.ThrowableError
 import com.resurrection.imkb.util.toast
+import com.resurrection.imkb.util.tryCatch
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 
@@ -86,12 +87,12 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                         val decryptedDetailResponse: DetailResponse = response
 
                         response.symbol.let { symbol ->
-                            decryptedDetailResponse.symbol =
-                                AESFunction.decrypt(symbol, handshakeResponse.aesKey,
-                                handshakeResponse.aesIV)
-                        }
+                            tryCatch {
+                                decryptedDetailResponse.symbol =
+                                    AESFunction.decrypt(symbol, handshakeResponse.aesKey,
+                                        handshakeResponse.aesIV)
 
-                        binding.detailResponse = decryptedDetailResponse
+                                                    binding.detailResponse = decryptedDetailResponse
 
                         response.graphicData.let { list ->
                             list.forEach { data ->
@@ -118,6 +119,10 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                             chart.legend.textColor = Color.WHITE
                             chart.description.textColor = Color.WHITE
                             chart.data.setValueTextColor(Color.WHITE)
+
+                        }
+
+                            }
                         }
                     }
                 }
