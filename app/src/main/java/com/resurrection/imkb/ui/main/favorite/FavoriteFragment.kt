@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.resurrection.imkb.BR
@@ -27,22 +28,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
+class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment_favorite) {
     private var response: HandshakeResponse? = null
     private val viewModel: FavoriteViewModel by viewModels()
     private var detailFragment: DetailFragment? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
     private var tempList = arrayListOf<Stock>()
 
-    override fun getLayoutRes(): Int = R.layout.fragment_favorite
+
 
     override fun init(savedInstanceState: Bundle?) {
-        lifecycleScope.launch {
-            response = DataStoreHelper(requireContext()).dsGet<HandshakeResponse>(
-                "handshakeResponse",
-                HandshakeResponse::class.java
-            )
-        }
+          DataStoreHelper().getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java) {
+                    response = it
+          }
+
+
         setHasOptionsMenu(true)
         setViewModelObserve()
         viewModel.getStocks()
@@ -67,14 +67,14 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     }
 
     private fun setViewModelObserve() {
-        viewModel.stocks.observe(viewLifecycleOwner, {
+        viewModel.stocks.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { list ->
                         response?.let {
 
                             stockAdapter = StockAdapter(
-                                requireContext(), R.layout.stock_item, list as ArrayList<Stock>,
+                                 R.layout.stock_item, list as ArrayList<Stock>,
                                 BR.stock, response!!.aesKey, response!!.aesIV,
                             )
                             { stock -> onAdapterClick(response!!, stock.bid.toString()) }
@@ -91,7 +91,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
                     }
                 }
                 Status.ERROR -> ThrowableError(it.message.toString())
-                Status.LOADING -> toast(requireContext(),"loading...")
+                Status.LOADING -> toast("loading...")
             }
         })
     }

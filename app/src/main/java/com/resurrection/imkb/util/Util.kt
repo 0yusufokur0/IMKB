@@ -12,7 +12,16 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.resurrection.imkb.App
 import com.resurrection.imkb.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 fun isNetworkAvailable(context: Context): Boolean {
     val connectivityManager =
@@ -29,12 +38,13 @@ fun isNetworkAvailable(context: Context): Boolean {
     }else return true
 }
 
-fun toast(context: Context, message: String): Toast {
+fun toast(message: String): Toast {
     var toast: Toast =
-        Toast.makeText(context, message, Toast.LENGTH_SHORT)
+        Toast.makeText(App.context, message, Toast.LENGTH_SHORT)
     toast.show()
     return toast
 }
+
 
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -85,3 +95,13 @@ fun tryCatch(func:()->Unit){
 class ThrowableError(msg:String):Throwable(msg){
     init { Log.e("ThrowableError",msg) }
 }
+
+fun runLifeCycleScope(block: suspend CoroutineScope.() -> Unit): Job? =
+    try {
+        val job = App.lifecycleOwner?.lifecycleScope?.launch { block() }
+        job
+    } catch (e: Exception) {
+        ThrowableError(e.toString())
+        null
+    }
+

@@ -16,8 +16,8 @@ import kotlinx.coroutines.*
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
-class SplashActivity : BaseActivity<ActivitySplashBinding>() {
-    override fun getLayoutRes(): Int = R.layout.activity_splash
+class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
+
 
     override fun init(savedInstanceState: Bundle?) {
         this.changeStatusBarColor(R.color.black)

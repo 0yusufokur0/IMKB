@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.resurrection.imkb.BR
@@ -31,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding>() {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
     private var stockPeriod = "all"
@@ -39,8 +40,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private var response: HandshakeResponse? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
     private var tempList = arrayListOf<Stock>()
-
-    override fun getLayoutRes(): Int = R.layout.fragment_home
 
     override fun init(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
@@ -93,7 +92,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         })
 
 
-        viewModel.listResponse.observe(viewLifecycleOwner, {
+        viewModel.listResponse.observe(viewLifecycleOwner, Observer{
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let { listResponse ->
@@ -103,7 +102,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 tempList = listResponse.stocks as ArrayList<Stock>
                                 stockAdapter =
                                     StockAdapter(
-                                        requireContext(), R.layout.stock_item, listResponse.stocks,
+                                         R.layout.stock_item, listResponse.stocks,
                                         BR.stock, response!!.aesKey, response!!.aesIV,)
                                     { stock -> onAdapterClick(response!!, stock.id.toString()) }
 
@@ -124,7 +123,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 stockAdapter?.sortByItem(SYMBOL)
 
                                 lifecycleScope.launch {
-                                    DataStoreHelper(requireContext()).dsSave(
+                                    DataStoreHelper().insertDataStore(
                                         "handshakeResponse",
                                         response!!
                                     )
@@ -185,7 +184,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     systemVersion
                 )
             )
-        } else toast(requireContext(), "Network is not available")
+        } else toast( "Network is not available")
 
     }
 

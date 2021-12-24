@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 
 
@@ -42,6 +43,7 @@ abstract class BaseBottomSheetFragment<VDB : ViewDataBinding> : BottomSheetDialo
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init(savedInstanceState)
+        App.activity = requireActivity()
     }
 
     override fun onDestroyView() {

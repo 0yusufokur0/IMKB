@@ -7,6 +7,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
+import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.StockItemBinding
@@ -28,7 +29,6 @@ enum class SORT {
 
 @Suppress("UNCHECKED_CAST")
 class StockAdapter<T, viewDataBinding : ViewDataBinding>(
-    private var context: Context,
     mLayoutResource: Int,
     mList: ArrayList<T>,
     mItemId: Int,
@@ -55,11 +55,11 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
         when {
             (currentList as ArrayList<Stock>)[position].isDown -> {
                 stateString = "▼"
-                stateTextColor = ContextCompat.getColor(context, R.color.red)
+                stateTextColor = ContextCompat.getColor(App.context as Context, R.color.red)
             }
             (currentList as ArrayList<Stock>)[position].isUp -> {
                 stateString = "▲"
-                stateTextColor = ContextCompat.getColor(context, R.color.green)
+                stateTextColor = ContextCompat.getColor(App.context as Context, R.color.green)
             }
             else -> {
                 stateString = "━"

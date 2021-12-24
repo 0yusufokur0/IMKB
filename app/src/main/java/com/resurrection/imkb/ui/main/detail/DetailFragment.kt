@@ -1,5 +1,6 @@
 package com.resurrection.imkb.ui.main.detail
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -7,10 +8,12 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.DetailRequest
@@ -78,7 +81,7 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
     }
 
     private fun setViewModelsObserve() {
-        viewModel.detail.observe(viewLifecycleOwner, {
+        viewModel.detail.observe(viewLifecycleOwner, Observer{
             when (it.status) {
                 SUCCESS -> {
                     it.data?.let { response ->
@@ -128,43 +131,43 @@ class DetailFragment : BaseBottomSheetFragment<FragmentDetailBinding>() {
                 }
                 ERROR -> {
                     ThrowableError(it.message.toString())
-                    toast(requireContext(),"Failed to load data")
+                    toast("Failed to load data")
                 }
                 LOADING -> { }
             }
         })
 
-        viewModel.isAdded.observe(viewLifecycleOwner, {
+        viewModel.isAdded.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 SUCCESS -> {
                     binding.favoriteImageView.changeIconColor(true)
-                    toast(requireContext(), "added to favorite")
+                    toast("added to favorite")
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(false)
-                    toast(requireContext(), "could not be added to favorite")
+                    toast( "could not be added to favorite")
                 }
                 LOADING -> { }
             }
         })
 
-        viewModel.isDeleted.observe(viewLifecycleOwner, {
+        viewModel.isDeleted.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 SUCCESS -> {
                     binding.favoriteImageView.changeIconColor(false)
-                    toast(requireContext(), "removed to favorite")
+                    toast( "removed to favorite")
 
                 }
                 ERROR -> {
                     binding.favoriteImageView.changeIconColor(true)
-                    toast(requireContext(), "could not be removed")
+                    toast("could not be removed")
 
                 }
                 LOADING -> { }
             }
         })
 
-        viewModel.isFavorite.observe(viewLifecycleOwner, {
+        viewModel.isFavorite.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 SUCCESS -> binding.favoriteImageView.changeIconColor(it.data)
                 ERROR -> binding.favoriteImageView.changeIconColor(false)

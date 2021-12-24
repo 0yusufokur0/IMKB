@@ -21,12 +21,11 @@ import com.resurrection.imkb.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>(), NavigationBarView.OnItemSelectedListener {
+class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main), NavigationBarView.OnItemSelectedListener {
     lateinit var appBarConfiguration: AppBarConfiguration
     private var textChangedFun: ((String) -> Any?)? = null
     lateinit var navController: NavController
 
-    override fun getLayoutRes(): Int = R.layout.activity_main
 
     override fun init(savedInstanceState: Bundle?) {
         this.changeStatusBarColor(R.color.black)
