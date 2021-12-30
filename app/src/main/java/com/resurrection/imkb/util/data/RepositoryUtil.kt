@@ -1,4 +1,4 @@
-package com.resurrection.imkb.util
+package com.resurrection.imkb.util.data
 
 import retrofit2.Response
 

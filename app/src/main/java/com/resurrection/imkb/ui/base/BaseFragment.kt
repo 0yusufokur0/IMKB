@@ -11,13 +11,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleObserver
-import com.resurrection.imkb.App
+
 
 abstract class BaseFragment<VDB : ViewDataBinding>(@LayoutRes val resLayoutId:Int) : Fragment(),
     LifecycleObserver {
 
     private var _binding: VDB? = null
     val binding get() = _binding!!
+
+
 
     abstract fun init(savedInstanceState: Bundle?)
 
@@ -34,8 +36,6 @@ abstract class BaseFragment<VDB : ViewDataBinding>(@LayoutRes val resLayoutId:In
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        App.activity = requireActivity()
-        App.lifecycleOwner = this
         init(savedInstanceState)
     }
 

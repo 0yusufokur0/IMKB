@@ -3,7 +3,7 @@ package com.resurrection.imkb.data.repository
 import com.resurrection.imkb.data.model.handshake.HandshakeRequest
 import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.*
-import com.resurrection.imkb.util.Resource
+import com.resurrection.imkb.util.data.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface ImkbRepository {

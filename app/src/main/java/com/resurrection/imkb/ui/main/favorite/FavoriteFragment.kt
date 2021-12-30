@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.resurrection.imkb.BR
 import com.resurrection.imkb.R
@@ -20,12 +19,11 @@ import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
-import com.resurrection.imkb.util.DataStoreHelper
-import com.resurrection.imkb.util.Status
-import com.resurrection.imkb.util.ThrowableError
+import com.resurrection.imkb.util.data.DataStoreHelper
+import com.resurrection.imkb.util.data.Status
+import com.resurrection.imkb.util.general.ThrowableError
 import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment_favorite) {
@@ -38,7 +36,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
 
 
     override fun init(savedInstanceState: Bundle?) {
-          DataStoreHelper().getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java) {
+          DataStoreHelper(requireActivity()).getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java) {
                     response = it
           }
 
@@ -73,10 +71,8 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
                     it.data?.let { list ->
                         response?.let {
 
-                            stockAdapter = StockAdapter(
-                                 R.layout.stock_item, list as ArrayList<Stock>,
-                                BR.stock, response!!.aesKey, response!!.aesIV,
-                            )
+                            stockAdapter = StockAdapter(R.layout.stock_item, list as ArrayList<Stock>,
+                                BR.stock, response!!.aesKey, response!!.aesIV,requireContext())
                             { stock -> onAdapterClick(response!!, stock.bid.toString()) }
 
                             binding.listRecyclerView.apply {

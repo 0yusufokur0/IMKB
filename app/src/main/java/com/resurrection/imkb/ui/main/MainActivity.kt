@@ -3,6 +3,7 @@ package com.resurrection.imkb.ui.main
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -13,12 +14,14 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivityMainBinding
 import com.resurrection.imkb.ui.base.BaseActivity
 import com.resurrection.imkb.util.changeStatusBarColor
 import com.resurrection.imkb.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main), NavigationBarView.OnItemSelectedListener {
@@ -28,7 +31,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main), 
 
 
     override fun init(savedInstanceState: Bundle?) {
-        this.changeStatusBarColor(R.color.black)
+        setUpNavController()
+
+        binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
+            text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
+        }
+    }
+
+    private fun setUpNavController(){
+        changeStatusBarColor(R.color.black)
         setSupportActionBar(findViewById(R.id.toolbar))
         val navView: BottomNavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -37,11 +48,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main), 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         binding.navView.setOnItemSelectedListener(this)
-
-        binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
-            text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
-        }
-
     }
 
     fun setTextChangedFun(mtextChangedFun: ((String) -> Any?)?) {
@@ -83,7 +89,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main), 
         }
 
         binding.toolbarTextView.text = null
-        this.hideKeyboard(binding.navView)
+        hideKeyboard(binding.navView)
         return true
     }
 

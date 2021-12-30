@@ -5,7 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.resurrection.imkb.data.model.imkb.DetailRequest
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.data.repository.FakeImkbRepository
-import com.resurrection.imkb.util.Status
+import com.resurrection.imkb.util.data.Status
 import com.resurrection.movies.MainCoroutineRule
 import com.resurrection.movies.getOrAwaitValueTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi

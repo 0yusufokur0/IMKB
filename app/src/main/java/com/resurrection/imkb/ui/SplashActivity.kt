@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
 import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivitySplashBinding
 import com.resurrection.imkb.ui.base.BaseActivity
 import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.util.changeStatusBarColor
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
@@ -20,6 +22,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
 
     override fun init(savedInstanceState: Bundle?) {
+
+        Gson().fromJson<String>("", String::class.java)
+
+
         this.changeStatusBarColor(R.color.black)
 
         binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {

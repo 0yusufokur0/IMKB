@@ -6,9 +6,9 @@ import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.*
 import com.resurrection.imkb.data.remote.HandshakeApiService
 import com.resurrection.imkb.data.remote.ImkbApiService
-import com.resurrection.imkb.util.Resource
-import com.resurrection.imkb.util.getResourceByDatabaseRequest
-import com.resurrection.imkb.util.getResourceByNetworkRequest
+import com.resurrection.imkb.util.data.Resource
+import com.resurrection.imkb.util.data.getResourceByDatabaseRequest
+import com.resurrection.imkb.util.data.getResourceByNetworkRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

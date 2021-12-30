@@ -7,12 +7,15 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
+
 open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
     var layoutResource: Int,
     var currentList: ArrayList<T>,
     var itemId: Int,
     var onItemClick: (T) -> Unit
 ) : RecyclerView.Adapter<BaseAdapter.BaseHolder<T>>() {
+
+
 
     lateinit var binding: viewDataBinding
 

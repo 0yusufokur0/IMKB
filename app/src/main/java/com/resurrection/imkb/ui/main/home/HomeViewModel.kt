@@ -9,8 +9,9 @@ import com.resurrection.imkb.data.model.imkb.ListRequest
 import com.resurrection.imkb.data.model.imkb.ListResponse
 import com.resurrection.imkb.data.repository.ImkbRepository
 import com.resurrection.imkb.ui.base.BaseViewModel
-import com.resurrection.imkb.util.Resource
-import com.resurrection.imkb.util.ThrowableError
+import com.resurrection.imkb.util.data.Resource
+import com.resurrection.imkb.util.general.ThrowableError
+
 import com.resurrection.imkb.util.isValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch

@@ -5,9 +5,9 @@ import com.resurrection.imkb.data.model.ServiceStatus
 import com.resurrection.imkb.data.model.handshake.HandshakeRequest
 import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.*
-import com.resurrection.imkb.util.Resource
-import com.resurrection.imkb.util.getResourceByDatabaseRequest
-import com.resurrection.imkb.util.getResourceByNetworkRequest
+import com.resurrection.imkb.util.data.Resource
+import com.resurrection.imkb.util.data.getResourceByDatabaseRequest
+import com.resurrection.imkb.util.data.getResourceByNetworkRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response

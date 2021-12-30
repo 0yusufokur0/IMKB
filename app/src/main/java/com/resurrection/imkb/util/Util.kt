@@ -1,6 +1,7 @@
 package com.resurrection.imkb.util
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -12,44 +13,38 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import javax.inject.Inject
+
+
+
+
+
 
 fun isNetworkAvailable(context: Context): Boolean {
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val capabilities =
         connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-    if (capabilities != null) {
-        return when {
+    return if (capabilities != null) {
+        when {
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
             else -> true
         }
-    }else return true
-}
-
-fun toast(message: String): Toast {
-    var toast: Toast =
-        Toast.makeText(App.context, message, Toast.LENGTH_SHORT)
-    toast.show()
-    return toast
+    }else true
 }
 
 
-fun Context.hideKeyboard(view: View) {
-    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-}
+
+
+
 
 fun Any.isValid(): Boolean {
     var isValid = true
@@ -61,11 +56,8 @@ fun Any.isValid(): Boolean {
 
         val value = fields[i].get(this)
 
-        Log.w(
-            "Msg", "Value of Field "
-                    + fields[i].name
-                    + " is " + value
-        )
+        Log.w("Msg", "Value of Field " + fields[i].name + " is " + value)
+
         if (value == 0 || value == 0.0 || value == "" || value == null) {
             isValid = false
         }
@@ -84,24 +76,8 @@ fun Activity.changeStatusBarColor(color: Int = R.color.black) {
     window.statusBarColor = ContextCompat.getColor(this, color)
 }
 
-fun tryCatch(func:()->Unit){
-    try {
-        func()
-    }catch (e:Exception){
-        ThrowableError(e.toString())
-    }
-}
 
-class ThrowableError(msg:String):Throwable(msg){
-    init { Log.e("ThrowableError",msg) }
-}
 
-fun runLifeCycleScope(block: suspend CoroutineScope.() -> Unit): Job? =
-    try {
-        val job = App.lifecycleOwner?.lifecycleScope?.launch { block() }
-        job
-    } catch (e: Exception) {
-        ThrowableError(e.toString())
-        null
-    }
+
+
 

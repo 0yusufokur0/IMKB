@@ -1,6 +1,5 @@
 package com.resurrection.imkb.ui.main.detail
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -13,7 +12,6 @@ import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.DetailRequest
@@ -21,11 +19,13 @@ import com.resurrection.imkb.data.model.imkb.DetailResponse
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentDetailBinding
 import com.resurrection.imkb.ui.base.BaseBottomSheetFragment
-import com.resurrection.imkb.util.AESFunction
-import com.resurrection.imkb.util.Status.*
-import com.resurrection.imkb.util.ThrowableError
+import com.resurrection.imkb.util.data.AESFunction
+import com.resurrection.imkb.util.data.Status.*
+import com.resurrection.imkb.util.general.ThrowableError
+import com.resurrection.imkb.util.general.tryCatch
+
 import com.resurrection.imkb.util.toast
-import com.resurrection.imkb.util.tryCatch
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 

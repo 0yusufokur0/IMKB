@@ -7,13 +7,12 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
-import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.StockItemBinding
 import com.resurrection.imkb.ui.base.BaseAdapter
 import com.resurrection.imkb.ui.main.adapters.SORT.*
-import com.resurrection.imkb.util.AESFunction
+import com.resurrection.imkb.util.data.AESFunction
 import com.resurrection.imkb.util.setCustomAnimation
 import java.util.*
 
@@ -34,7 +33,9 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
     mItemId: Int,
     private var aesKey: String,
     private var aesIV: String,
-    mOnItemClick: (T) -> Unit
+    val context: Context,
+    mOnItemClick: (T) -> Unit,
+
 ) : BaseAdapter<T, viewDataBinding>(mLayoutResource, mList, mItemId, mOnItemClick), Filterable {
     private var tempList: ArrayList<T> = currentList
     private val constList: ArrayList<T> = currentList
@@ -55,11 +56,11 @@ class StockAdapter<T, viewDataBinding : ViewDataBinding>(
         when {
             (currentList as ArrayList<Stock>)[position].isDown -> {
                 stateString = "▼"
-                stateTextColor = ContextCompat.getColor(App.context as Context, R.color.red)
+                stateTextColor = ContextCompat.getColor(context , R.color.red)
             }
             (currentList as ArrayList<Stock>)[position].isUp -> {
                 stateString = "▲"
-                stateTextColor = ContextCompat.getColor(App.context as Context, R.color.green)
+                stateTextColor = ContextCompat.getColor(context , R.color.green)
             }
             else -> {
                 stateString = "━"

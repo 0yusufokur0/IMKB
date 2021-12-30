@@ -27,7 +27,10 @@ import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
 import com.resurrection.imkb.util.*
-import com.resurrection.imkb.util.Status.*
+import com.resurrection.imkb.util.data.AESFunction
+import com.resurrection.imkb.util.data.Status.*
+import com.resurrection.imkb.util.data.DataStoreHelper
+import com.resurrection.imkb.util.general.ThrowableError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -44,6 +47,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun init(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         fetchList()
+
+        requireContext()
+
         setViewModelObserve()
         binding.apply {
             symbol.sortClick { stockAdapter?.sortByItem(SYMBOL) }
@@ -66,7 +72,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun setViewModelObserve() {
-        viewModel.auth.observe(this, { handshake ->
+        viewModel.auth.observe(this) { handshake ->
             when (handshake.status) {
                 SUCCESS -> {
                     handshake.data?.let { handShakeData ->
@@ -89,7 +95,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
                 ERROR -> ThrowableError(handshake.message.toString())
             }
-        })
+        }
 
 
         viewModel.listResponse.observe(viewLifecycleOwner, Observer{
@@ -103,7 +109,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 stockAdapter =
                                     StockAdapter(
                                          R.layout.stock_item, listResponse.stocks,
-                                        BR.stock, response!!.aesKey, response!!.aesIV,)
+                                        BR.stock, response!!.aesKey, response!!.aesIV,requireContext())
                                     { stock -> onAdapterClick(response!!, stock.id.toString()) }
 
                                 binding.apply {
@@ -123,7 +129,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 stockAdapter?.sortByItem(SYMBOL)
 
                                 lifecycleScope.launch {
-                                    DataStoreHelper().insertDataStore(
+                                    DataStoreHelper(requireActivity()).insertDataStore(
                                         "handshakeResponse",
                                         response!!
                                     )
