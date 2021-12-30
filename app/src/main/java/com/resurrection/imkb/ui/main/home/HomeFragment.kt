@@ -128,7 +128,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 stockAdapter?.sortByItem(SYMBOL)
 
                                 lifecycleScope.launch {
-                                    dataStoreManager.insertDataStore("handshakeResponse", response!!)
+                                   appSession.dataStore.put("handshakeResponse", response!!)
                                 }
                             }
                         }

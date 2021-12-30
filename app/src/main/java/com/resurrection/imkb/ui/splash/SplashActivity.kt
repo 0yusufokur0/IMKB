@@ -21,8 +21,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
 
 
     override fun init(savedInstanceState: Bundle?) {
+        appSession.dataStore.put("data","hello from data store")
 
-        sharedPreferencesManager.insert("data","hello shared preferences")
 
         this.changeStatusBarColor(R.color.black)
 

@@ -20,22 +20,17 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+    fun provideSharedPreferencesManager(@ApplicationContext context: Context) = SharedPreferencesManager(context)
 
     @Singleton
     @Provides
-    fun provideSharedPreferencesHelper(preferences: SharedPreferences) = SharedPreferencesManager(preferences)
+    fun provideDataStoreManager(@ApplicationContext context: Context) = DataStoreManager(context.createDataStore(context.packageName))
 
     @Singleton
     @Provides
-    fun provideDataStore(@ApplicationContext context: Context) =
-        DataStoreManager(context.createDataStore(context.packageName))
+    fun provideDataHolderManager() = DataHolderManager(Bundle())
 
     @Singleton
     @Provides
-    fun provideDataHolder() = Bundle()
-
-    @Singleton
-    @Provides
-    fun provideDataHolderHelper(bundle: Bundle) = DataHolderManager(bundle)
+    fun provideAppSession(holder: DataHolderManager,pref: SharedPreferencesManager, store: DataStoreManager) = AppSession(holder,pref,store)
 }

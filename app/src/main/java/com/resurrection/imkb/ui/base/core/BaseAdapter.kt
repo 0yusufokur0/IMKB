@@ -6,6 +6,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.resurrection.imkb.ui.base.di.AppSession
+import javax.inject.Inject
 
 open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
     var layoutResource: Int,
@@ -13,6 +15,9 @@ open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
     var itemId: Int,
     var onItemClick: (T) -> Unit
 ) : RecyclerView.Adapter<BaseAdapter.BaseHolder<T>>() {
+
+    @Inject
+    lateinit var appSession: AppSession
 
     lateinit var binding: viewDataBinding
 

@@ -17,17 +17,10 @@ import javax.inject.Inject
 class DataStoreManager @Inject constructor(private val dataStore: DataStore<Preferences>) {
     lateinit var lifecycleOwner: LifecycleOwner
 
-    fun insertDataStore(key: String, value: Any) =
-        runLifeCycleScope { dataStore.edit { it[preferencesKey<String>(key)] = Gson().toJson(value) } }
-
-    fun <T> getDataStore(key: String, typeOfT: Type?,function: (T) -> Unit) =
-        runLifeCycleScope { function((Gson().fromJson(dataStore.data.first()[preferencesKey<String>(key)], typeOfT))) }
-
-    fun removeDataStore(key: String) =
-        runLifeCycleScope { dataStore.edit { it.remove(preferencesKey(key)) } }
-
-    fun clearDataStore() = runLifeCycleScope { dataStore.edit { it.clear() } }
-
+    fun put(key: String, value: Any) = runLifeCycleScope { dataStore.edit { it[preferencesKey<String>(key)] = Gson().toJson(value) } }
+    fun <T> get(key: String, typeOfT: Type?, function: (T) -> Unit) = runLifeCycleScope { function((Gson().fromJson(dataStore.data.first()[preferencesKey<String>(key)], typeOfT))) }
+    fun remove(key: String) = runLifeCycleScope { dataStore.edit { it.remove(preferencesKey(key)) } }
+    fun clear() = runLifeCycleScope { dataStore.edit { it.clear() } }
 
     private fun runLifeCycleScope(block: suspend CoroutineScope.() -> Unit): Job? =
         try {
