@@ -10,7 +10,6 @@ import com.resurrection.imkb.ui.base.util.stringToModel
 import java.lang.reflect.Type
 
 class TypeConverter {
-
     @TypeConverter
     fun fromServiceStatusLangGson(value: ServiceStatus) = modelToString(value)
     @TypeConverter
@@ -19,5 +18,4 @@ class TypeConverter {
     fun fromDetailResponseStatusLangGson(value: List<Graphic>) = modelToString(value)
     @TypeConverter
     fun toDetailResponseLangList(value: String) = stringToModel<List<Graphic>>(value)
-
 }

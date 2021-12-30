@@ -1,4 +1,4 @@
-package com.resurrection.imkb.ui.base.data
+package com.resurrection.imkb.util
 
 import android.util.Base64
 import javax.crypto.Cipher

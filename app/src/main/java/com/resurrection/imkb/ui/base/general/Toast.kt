@@ -1,4 +1,4 @@
-package com.resurrection.imkb.util
+package com.resurrection.imkb.ui.base.general
 
 import android.app.Activity
 import android.app.Service

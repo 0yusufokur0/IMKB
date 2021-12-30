@@ -9,19 +9,26 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleObserver
-import com.resurrection.imkb.ui.base.data.DataStoreHelper
+import com.resurrection.imkb.ui.base.data.DataHolderManager
+import com.resurrection.imkb.ui.base.data.DataStoreManager
+import com.resurrection.imkb.ui.base.data.SharedPreferencesManager
 import javax.inject.Inject
 
 
 abstract class BaseFragment<VDB : ViewDataBinding>(@LayoutRes val resLayoutId:Int) : Fragment(),
-    LifecycleObserver {
+    LifecycleEventObserver {
+
+    @Inject
+    lateinit var dataHolderManager: DataHolderManager
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private var _binding: VDB? = null
     val binding get() = _binding!!
-
-    @Inject
-    lateinit var dataStoreHelper: DataStoreHelper
 
     abstract fun init(savedInstanceState: Bundle?)
 
@@ -32,7 +39,7 @@ abstract class BaseFragment<VDB : ViewDataBinding>(@LayoutRes val resLayoutId:In
         savedInstanceState: Bundle?
     ): View? {
         _binding = DataBindingUtil.inflate(inflater, resLayoutId, container, false)
-        dataStoreHelper.lifecycleOwner = this
+        dataStoreManager.lifecycleOwner = this
         return _binding!!.root
     }
 

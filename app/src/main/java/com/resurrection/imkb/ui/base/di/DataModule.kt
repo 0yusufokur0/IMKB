@@ -4,10 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.datastore.preferences.createDataStore
-import com.resurrection.imkb.ui.base.data.DataHolder
-import com.resurrection.imkb.ui.base.data.DataStoreHelper
-import com.resurrection.imkb.ui.base.data.SharedPreferencesHelper
-import com.resurrection.imkb.ui.base.util.getMyApplicationLifecycleOwner
+import com.resurrection.imkb.ui.base.data.DataHolderManager
+import com.resurrection.imkb.ui.base.data.DataStoreManager
+import com.resurrection.imkb.ui.base.data.SharedPreferencesManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,12 +24,12 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreferencesHelper(preferences: SharedPreferences) = SharedPreferencesHelper(preferences)
+    fun provideSharedPreferencesHelper(preferences: SharedPreferences) = SharedPreferencesManager(preferences)
 
     @Singleton
     @Provides
     fun provideDataStore(@ApplicationContext context: Context) =
-        DataStoreHelper(context.createDataStore(context.packageName))
+        DataStoreManager(context.createDataStore(context.packageName))
 
     @Singleton
     @Provides
@@ -38,5 +37,5 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideDataHolderHelper(bundle: Bundle) = DataHolder(bundle)
+    fun provideDataHolderHelper(bundle: Bundle) = DataHolderManager(bundle)
 }

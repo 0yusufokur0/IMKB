@@ -16,9 +16,13 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.resurrection.imkb.R
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 fun <T> stringToModel(value: String) = Gson().fromJson(value, object : TypeToken<T>() {}.type) as T
 fun <T> modelToString(value: T) = Gson().toJson(value, object : TypeToken<T>() {}.type) as String
+
+
 
 fun isNetworkAvailable(context: Context): Boolean {
     try {
@@ -68,36 +72,3 @@ fun Activity.changeStatusBarColor(color: Int = R.color.black) {
     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     window.statusBarColor = ContextCompat.getColor(this, color)
 }
-
-val Context.lifecycleOwner: LifecycleOwner?
-    get() {
-        var context: Context? = this
-
-        while (context != null && context !is LifecycleOwner) {
-            val baseContext = (context as? ContextWrapper?)?.baseContext
-            context = if (baseContext == context) null else baseContext
-        }
-
-        return if (context is LifecycleOwner) context else null
-    }
-
-
-// lifeCycleOwner from Activity
-fun Activity.getMyLifecycleOwner(): LifecycleOwner? {
-    return this.lifecycleOwner
-}
-// lifeCycleOwner from Fragment
-fun Fragment.getMyLifecycleOwner(): LifecycleOwner? {
-    return this.viewLifecycleOwner
-}
-// lifeCycleOwner from Context
-fun Context.getMyLifecycleOwner(): LifecycleOwner? {
-    return this.lifecycleOwner
-}
-// lifeCycleOwner from Application Context
-fun Context.getMyApplicationLifecycleOwner(): LifecycleOwner? {
-    return this.applicationContext.lifecycleOwner
-}
-
-
-

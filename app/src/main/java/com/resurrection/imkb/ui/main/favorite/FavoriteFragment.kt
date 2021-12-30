@@ -19,10 +19,9 @@ import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
-import com.resurrection.imkb.ui.base.data.DataStoreHelper
 import com.resurrection.imkb.ui.base.data.Status
 import com.resurrection.imkb.ui.base.general.ThrowableError
-import com.resurrection.imkb.util.toast
+import com.resurrection.imkb.ui.base.general.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +33,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
     private var tempList = arrayListOf<Stock>()
 
     override fun init(savedInstanceState: Bundle?) {
-          dataStoreHelper.getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java){
+          dataStoreManager.getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java){
                     response = it
           }
 

@@ -1,4 +1,4 @@
-package com.resurrection.imkb.util
+package com.resurrection.imkb.ui.base.general
 
 import android.app.Activity
 import android.app.Service
@@ -12,7 +12,8 @@ fun Fragment.hideKeyboard() = hideKeyboardMain(requireActivity(), requireActivit
 fun Context.hideKeyboard(view: View) = hideKeyboardMain(this, view)
 fun Service.hideKeyboard(view: View) = hideKeyboardMain(this, view)
 
-private fun hideKeyboardMain(context: Context,view: View) {
+private fun hideKeyboardMain(context: Context,view: View) :InputMethodManager{
     val inputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    return inputMethodManager
 }

@@ -7,15 +7,12 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-
 open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
     var layoutResource: Int,
     var currentList: ArrayList<T>,
     var itemId: Int,
     var onItemClick: (T) -> Unit
 ) : RecyclerView.Adapter<BaseAdapter.BaseHolder<T>>() {
-
-
 
     lateinit var binding: viewDataBinding
 
@@ -55,13 +52,9 @@ open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
         private val oldList: List<T>,
         private val newList: List<T>
     ) : DiffUtil.Callback() {
-
         override fun getOldListSize(): Int = oldList.size
-
         override fun getNewListSize(): Int = newList.size
-
         override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
-
         override fun areContentsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
     }
 }

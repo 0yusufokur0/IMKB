@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.lifecycleScope
-import com.google.gson.Gson
 import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivitySplashBinding
 import com.resurrection.imkb.ui.base.core.BaseActivity
@@ -23,8 +22,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
 
     override fun init(savedInstanceState: Bundle?) {
 
-        Gson().fromJson<String>("", String::class.java)
-
+        sharedPreferencesManager.insert("data","hello shared preferences")
 
         this.changeStatusBarColor(R.color.black)
 

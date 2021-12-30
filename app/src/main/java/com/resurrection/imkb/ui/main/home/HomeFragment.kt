@@ -26,11 +26,10 @@ import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
-import com.resurrection.imkb.util.*
-import com.resurrection.imkb.ui.base.data.AESFunction
+import com.resurrection.imkb.util.AESFunction
 import com.resurrection.imkb.ui.base.data.Status.*
-import com.resurrection.imkb.ui.base.data.DataStoreHelper
 import com.resurrection.imkb.ui.base.general.ThrowableError
+import com.resurrection.imkb.ui.base.general.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -129,7 +128,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 stockAdapter?.sortByItem(SYMBOL)
 
                                 lifecycleScope.launch {
-                                    dataStoreHelper.insertDataStore("handshakeResponse", response!!)
+                                    dataStoreManager.insertDataStore("handshakeResponse", response!!)
                                 }
                             }
                         }

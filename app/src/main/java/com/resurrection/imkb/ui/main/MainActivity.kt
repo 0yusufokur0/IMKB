@@ -17,7 +17,8 @@ import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivityMainBinding
 import com.resurrection.imkb.ui.base.core.BaseActivity
 import com.resurrection.imkb.ui.base.util.changeStatusBarColor
-import com.resurrection.imkb.util.hideKeyboard
+import com.resurrection.imkb.ui.base.general.hideKeyboard
+import com.resurrection.imkb.ui.base.general.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,6 +31,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.a
     override fun init(savedInstanceState: Bundle?) {
         setUpNavController()
 
+        toast(sharedPreferencesManager.get("data",String::class.java))
         binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
             text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
         }
