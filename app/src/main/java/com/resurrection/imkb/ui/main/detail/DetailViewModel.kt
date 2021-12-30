@@ -38,7 +38,7 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
                 .onStart { _detail.postValue(Resource.Loading()) }
                 .catch { _detail.postValue(Resource.Error(it)) }
                 .collect { _detail.postValue(it) }
-        } else _detail.postValue(Resource.Error(Throwable("request id is empty")))
+        } else _detail.postValue(Resource.InValid(Throwable("request id is empty")))
     }
 
     fun insertFavorite(stock: Stock) = viewModelScope.launch {
@@ -47,7 +47,7 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
                 .onStart { _isAdded.postValue(Resource.Loading()) }
                 .catch { _isAdded.postValue(Resource.Error(it)) }
                 .collect { _isAdded.postValue(Resource.Success(true)) }
-        } else _isAdded.postValue(Resource.Error(Throwable("stock bid is empty")))
+        } else _isAdded.postValue(Resource.InValid(Throwable("stock bid is empty")))
     }
 
     fun deleteFavorite(stock: Stock) = viewModelScope.launch {
@@ -57,7 +57,7 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
                 .onStart { _isDeleted.postValue(Resource.Loading()) }
                 .catch { _isDeleted.postValue(Resource.Error(it)) }
                 .collect { _isDeleted.postValue(Resource.Success(true)) }
-        } else _isDeleted.postValue(Resource.Error(Throwable("stock bid is empty")))
+        } else _isDeleted.postValue(Resource.InValid(Throwable("stock bid is empty")))
     }
 
     fun getFavoriteState(id: Double) = viewModelScope.launch {
@@ -72,7 +72,7 @@ open class DetailViewModel @Inject constructor(private val imkbRepository: ImkbR
                         _isFavorite.postValue(Resource.Success(false))
                     }
                 }
-        } else _isFavorite.postValue(Resource.Error(Throwable("id is empty")))
+        } else _isFavorite.postValue(Resource.InValid(Throwable("id is empty")))
     }
 
 

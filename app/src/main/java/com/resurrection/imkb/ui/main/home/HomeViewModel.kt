@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
                 .onStart { _auth.postValue(Resource.Loading()) }
                 .catch { _auth.postValue(Resource.Error(it)) }
                 .collect { _auth.postValue(it) }
-        } else _auth.postValue(Resource.Error(Throwable("request parameters is empty")))
+        } else _auth.postValue(Resource.InValid(Throwable("request parameters is empty")))
     }
 
     fun getResponseList(XVPAuthorization: String, request: ListRequest) = viewModelScope.launch {
@@ -45,6 +45,6 @@ class HomeViewModel @Inject constructor(private val imkbRepository: ImkbReposito
                 .onStart { _listResponse.postValue(Resource.Loading()) }
                 .catch { _listResponse.postValue(Resource.Error(it)) }
                 .collect { _listResponse.postValue(it) }
-        } else _listResponse.postValue(Resource.Error(ThrowableError("authorization and request parameters is empty")))
+        } else _listResponse.postValue(Resource.InValid(ThrowableError("authorization and request parameters is empty")))
     }
 }

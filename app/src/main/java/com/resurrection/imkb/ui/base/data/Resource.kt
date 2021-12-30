@@ -18,10 +18,8 @@ sealed class Resource<out T>(val status: Status, val data: T?, val message: Thro
     class InValid<T>(exception: Throwable?) : Resource<T>(Status.INVALID, null, exception)
 }
 
-fun <T> getDataByNetwork(request: suspend () -> Response<T>) =  flow { emit(
-    getResourceByNetworkRequest { request() }
-) }
-fun<T> getDataByDatabase(request: suspend () -> T) = flow { emit(getResourceByDatabaseRequest { request() }) }
+fun <T> getDataByNetwork(request: suspend () -> Response<T>) =  flow { emit(getResourceByNetworkRequest { request() }) }
+fun <T> getDataByDatabase(request: suspend () -> T) = flow { emit(getResourceByDatabaseRequest { request() }) }
 
 suspend fun <T> getResourceByNetworkRequest(request: suspend () -> Response<T>): Resource<T> {
     try {
