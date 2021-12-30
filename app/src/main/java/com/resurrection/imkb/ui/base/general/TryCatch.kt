@@ -1,4 +1,4 @@
-package com.resurrection.imkb.util.general
+package com.resurrection.imkb.ui.base.general
 
 import android.util.Log
 

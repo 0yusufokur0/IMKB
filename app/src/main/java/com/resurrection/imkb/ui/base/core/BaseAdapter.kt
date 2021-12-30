@@ -1,4 +1,4 @@
-package com.resurrection.imkb.ui.base
+package com.resurrection.imkb.ui.base.core
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

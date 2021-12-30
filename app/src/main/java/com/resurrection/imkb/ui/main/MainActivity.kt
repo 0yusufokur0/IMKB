@@ -3,7 +3,6 @@ package com.resurrection.imkb.ui.main
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -14,21 +13,19 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
-import com.resurrection.imkb.App
 import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivityMainBinding
-import com.resurrection.imkb.ui.base.BaseActivity
-import com.resurrection.imkb.util.changeStatusBarColor
+import com.resurrection.imkb.ui.base.core.BaseActivity
+import com.resurrection.imkb.ui.base.util.changeStatusBarColor
 import com.resurrection.imkb.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main), NavigationBarView.OnItemSelectedListener {
+class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.activity_main,MainViewModel::class.java),
+    NavigationBarView.OnItemSelectedListener {
     lateinit var appBarConfiguration: AppBarConfiguration
     private var textChangedFun: ((String) -> Any?)? = null
     lateinit var navController: NavController
-
 
     override fun init(savedInstanceState: Bundle?) {
         setUpNavController()

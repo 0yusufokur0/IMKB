@@ -1,6 +1,5 @@
-package com.resurrection.imkb.ui.base
+package com.resurrection.imkb.ui.app
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,20 +10,21 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.resurrection.imkb.App
 import com.resurrection.imkb.R
-
+import com.resurrection.imkb.ui.base.data.DataStoreHelper
+import javax.inject.Inject
 
 
 abstract class BaseBottomSheetFragment<VDB : ViewDataBinding> : BottomSheetDialogFragment(),
     LifecycleObserver {
 
+    @Inject
+    lateinit var dataStoreHelper: DataStoreHelper
 
     private var _binding: VDB? = null
     val binding get() = _binding!!
     @LayoutRes
     abstract fun getLayoutRes(): Int
-
 
     abstract fun init(savedInstanceState: Bundle?)
 
@@ -46,8 +46,8 @@ abstract class BaseBottomSheetFragment<VDB : ViewDataBinding> : BottomSheetDialo
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dataStoreHelper.lifecycleOwner = this
         init(savedInstanceState)
-
     }
 
     override fun onDestroyView() {

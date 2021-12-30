@@ -8,11 +8,11 @@ import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.ListRequest
 import com.resurrection.imkb.data.model.imkb.ListResponse
 import com.resurrection.imkb.data.repository.ImkbRepository
-import com.resurrection.imkb.ui.base.BaseViewModel
-import com.resurrection.imkb.util.data.Resource
-import com.resurrection.imkb.util.general.ThrowableError
+import com.resurrection.imkb.ui.base.core.BaseViewModel
+import com.resurrection.imkb.ui.base.data.Resource
+import com.resurrection.imkb.ui.base.general.ThrowableError
 
-import com.resurrection.imkb.util.isValid
+import com.resurrection.imkb.ui.base.util.isValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect

@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.data.repository.ImkbRepository
-import com.resurrection.imkb.ui.base.BaseViewModel
-import com.resurrection.imkb.util.data.Resource
-import com.resurrection.imkb.util.general.ThrowableError
+import com.resurrection.imkb.ui.base.core.BaseViewModel
+import com.resurrection.imkb.ui.base.data.Resource
+import com.resurrection.imkb.ui.base.general.ThrowableError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect

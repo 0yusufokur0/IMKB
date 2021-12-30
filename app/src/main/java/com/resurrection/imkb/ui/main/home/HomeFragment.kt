@@ -21,16 +21,16 @@ import com.resurrection.imkb.data.model.imkb.ListRequest
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentHomeBinding
 import com.resurrection.imkb.databinding.StockItemBinding
-import com.resurrection.imkb.ui.base.BaseFragment
+import com.resurrection.imkb.ui.base.core.BaseFragment
 import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT.*
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
 import com.resurrection.imkb.util.*
-import com.resurrection.imkb.util.data.AESFunction
-import com.resurrection.imkb.util.data.Status.*
-import com.resurrection.imkb.util.data.DataStoreHelper
-import com.resurrection.imkb.util.general.ThrowableError
+import com.resurrection.imkb.ui.base.data.AESFunction
+import com.resurrection.imkb.ui.base.data.Status.*
+import com.resurrection.imkb.ui.base.data.DataStoreHelper
+import com.resurrection.imkb.ui.base.general.ThrowableError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -129,10 +129,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 stockAdapter?.sortByItem(SYMBOL)
 
                                 lifecycleScope.launch {
-                                    DataStoreHelper(requireActivity()).insertDataStore(
-                                        "handshakeResponse",
-                                        response!!
-                                    )
+                                    dataStoreHelper.insertDataStore("handshakeResponse", response!!)
                                 }
                             }
                         }

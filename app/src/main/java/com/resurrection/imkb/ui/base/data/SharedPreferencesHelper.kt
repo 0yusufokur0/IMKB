@@ -1,4 +1,4 @@
-package com.resurrection.imkb.util.data
+package com.resurrection.imkb.ui.base.data
 
 import android.content.SharedPreferences
 import com.google.gson.Gson

@@ -1,4 +1,4 @@
-package com.resurrection.imkb.util.data
+package com.resurrection.imkb.ui.base.data
 
 import android.os.Bundle
 import com.google.gson.Gson

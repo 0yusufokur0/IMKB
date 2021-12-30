@@ -1,4 +1,4 @@
-package com.resurrection.imkb.ui.base
+package com.resurrection.imkb.ui.base.core
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope

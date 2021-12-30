@@ -18,11 +18,11 @@ import com.resurrection.imkb.data.model.imkb.DetailRequest
 import com.resurrection.imkb.data.model.imkb.DetailResponse
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentDetailBinding
-import com.resurrection.imkb.ui.base.BaseBottomSheetFragment
-import com.resurrection.imkb.util.data.AESFunction
-import com.resurrection.imkb.util.data.Status.*
-import com.resurrection.imkb.util.general.ThrowableError
-import com.resurrection.imkb.util.general.tryCatch
+import com.resurrection.imkb.ui.app.BaseBottomSheetFragment
+import com.resurrection.imkb.ui.base.data.AESFunction
+import com.resurrection.imkb.ui.base.data.Status.*
+import com.resurrection.imkb.ui.base.general.ThrowableError
+import com.resurrection.imkb.ui.base.general.tryCatch
 
 import com.resurrection.imkb.util.toast
 

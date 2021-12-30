@@ -14,14 +14,14 @@ import com.resurrection.imkb.data.model.handshake.HandshakeResponse
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.FragmentFavoriteBinding
 import com.resurrection.imkb.databinding.StockItemBinding
-import com.resurrection.imkb.ui.base.BaseFragment
+import com.resurrection.imkb.ui.base.core.BaseFragment
 import com.resurrection.imkb.ui.main.MainActivity
 import com.resurrection.imkb.ui.main.adapters.SORT
 import com.resurrection.imkb.ui.main.adapters.StockAdapter
 import com.resurrection.imkb.ui.main.detail.DetailFragment
-import com.resurrection.imkb.util.data.DataStoreHelper
-import com.resurrection.imkb.util.data.Status
-import com.resurrection.imkb.util.general.ThrowableError
+import com.resurrection.imkb.ui.base.data.DataStoreHelper
+import com.resurrection.imkb.ui.base.data.Status
+import com.resurrection.imkb.ui.base.general.ThrowableError
 import com.resurrection.imkb.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,10 +33,8 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
     private var tempList = arrayListOf<Stock>()
 
-
-
     override fun init(savedInstanceState: Bundle?) {
-          DataStoreHelper(requireActivity()).getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java) {
+          dataStoreHelper.getDataStore<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java){
                     response = it
           }
 

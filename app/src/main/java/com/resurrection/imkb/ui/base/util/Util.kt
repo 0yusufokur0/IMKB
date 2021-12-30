@@ -1,8 +1,8 @@
-package com.resurrection.imkb.util
+package com.resurrection.imkb.ui.base.util
 
 import android.app.Activity
-import android.app.ActivityManager
 import android.content.Context
+import android.content.ContextWrapper
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
@@ -10,23 +10,18 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
-import com.resurrection.imkb.App
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.resurrection.imkb.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-
-
-
-
+fun <T> stringToModel(value: String) = Gson().fromJson(value, object : TypeToken<T>() {}.type) as T
+fun <T> modelToString(value: T) = Gson().toJson(value, object : TypeToken<T>() {}.type) as String
 
 fun isNetworkAvailable(context: Context): Boolean {
+    try {
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val capabilities =
@@ -38,13 +33,11 @@ fun isNetworkAvailable(context: Context): Boolean {
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
             else -> true
         }
-    }else true
+    }else false
+    }catch (e:Exception){
+        return false
+    }
 }
-
-
-
-
-
 
 fun Any.isValid(): Boolean {
     var isValid = true
@@ -76,8 +69,35 @@ fun Activity.changeStatusBarColor(color: Int = R.color.black) {
     window.statusBarColor = ContextCompat.getColor(this, color)
 }
 
+val Context.lifecycleOwner: LifecycleOwner?
+    get() {
+        var context: Context? = this
+
+        while (context != null && context !is LifecycleOwner) {
+            val baseContext = (context as? ContextWrapper?)?.baseContext
+            context = if (baseContext == context) null else baseContext
+        }
+
+        return if (context is LifecycleOwner) context else null
+    }
 
 
+// lifeCycleOwner from Activity
+fun Activity.getMyLifecycleOwner(): LifecycleOwner? {
+    return this.lifecycleOwner
+}
+// lifeCycleOwner from Fragment
+fun Fragment.getMyLifecycleOwner(): LifecycleOwner? {
+    return this.viewLifecycleOwner
+}
+// lifeCycleOwner from Context
+fun Context.getMyLifecycleOwner(): LifecycleOwner? {
+    return this.lifecycleOwner
+}
+// lifeCycleOwner from Application Context
+fun Context.getMyApplicationLifecycleOwner(): LifecycleOwner? {
+    return this.applicationContext.lifecycleOwner
+}
 
 
 

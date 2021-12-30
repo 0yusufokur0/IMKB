@@ -10,10 +10,10 @@ import androidx.databinding.ViewDataBinding
 import com.resurrection.imkb.R
 import com.resurrection.imkb.data.model.imkb.Stock
 import com.resurrection.imkb.databinding.StockItemBinding
-import com.resurrection.imkb.ui.base.BaseAdapter
+import com.resurrection.imkb.ui.base.core.BaseAdapter
 import com.resurrection.imkb.ui.main.adapters.SORT.*
-import com.resurrection.imkb.util.data.AESFunction
-import com.resurrection.imkb.util.setCustomAnimation
+import com.resurrection.imkb.ui.base.data.AESFunction
+import com.resurrection.imkb.ui.base.util.setCustomAnimation
 import java.util.*
 
 enum class SORT {

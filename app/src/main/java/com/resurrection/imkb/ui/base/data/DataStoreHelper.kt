@@ -1,20 +1,23 @@
-package com.resurrection.imkb.util.data
+package com.resurrection.imkb.ui.base.data
 
-import android.app.Activity
+import androidx.datastore.DataStore
 import androidx.datastore.preferences.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
-import com.resurrection.imkb.util.general.ThrowableError
+import com.resurrection.imkb.ui.base.general.ThrowableError
+import com.resurrection.imkb.ui.base.util.modelToString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import java.lang.reflect.Type
+import javax.inject.Inject
 
-class DataStoreHelper(private val activity: Activity) {
+class DataStoreHelper @Inject constructor(private val dataStore: DataStore<Preferences>) {
+    lateinit var lifecycleOwner: LifecycleOwner
 
-    private val dataStore = activity.createDataStore(activity.packageName)
 
     fun insertDataStore(key: String, value: Any) =
         runLifeCycleScope { dataStore.edit { it[preferencesKey<String>(key)] = Gson().toJson(value) } }
@@ -23,7 +26,7 @@ class DataStoreHelper(private val activity: Activity) {
         runLifeCycleScope { function((Gson().fromJson(dataStore.data.first()[preferencesKey<String>(key)], typeOfT) as T)) }
 
     fun removeDataStore(key: String) =
-        runLifeCycleScope { dataStore.edit { it.remove(preferencesKey<String>(key)) } }
+        runLifeCycleScope { dataStore.edit { it.remove(preferencesKey(key)) } }
 
     fun clearDataStore() =
         runLifeCycleScope { dataStore.edit { it.clear() } }
@@ -33,10 +36,11 @@ class DataStoreHelper(private val activity: Activity) {
 
     private fun runLifeCycleScope(block: suspend CoroutineScope.() -> Unit): Job? =
         try {
-            val job = (activity as LifecycleOwner).lifecycleScope.launch { block() }
+            val job = lifecycleOwner.lifecycleScope.launch { block() }
             job
         } catch (e: Exception) {
             ThrowableError(e.toString())
             null
         }
 }
+
