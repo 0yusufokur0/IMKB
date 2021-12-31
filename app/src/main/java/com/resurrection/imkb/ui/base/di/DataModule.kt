@@ -3,7 +3,6 @@ package com.resurrection.imkb.ui.base.di
 import android.content.Context
 import android.os.Bundle
 import com.resurrection.imkb.ui.base.AppSession
-import com.resurrection.imkb.ui.base.data.DataHolderManager
 import com.resurrection.imkb.ui.base.data.SharedPreferencesManager
 import dagger.Module
 import dagger.Provides

@@ -2,6 +2,8 @@ package com.resurrection.imkb.ui.base.core
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
@@ -14,7 +16,7 @@ open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
     var currentList: ArrayList<T>,
     var itemId: Int,
     var onItemClick: (T) -> Unit
-) : RecyclerView.Adapter<BaseAdapter.BaseHolder<T>>() {
+) : RecyclerView.Adapter<BaseAdapter.BaseHolder<T>>(),Filterable {
 
     @Inject
     lateinit var appSession: AppSession
@@ -61,6 +63,33 @@ open class BaseAdapter<T, viewDataBinding : ViewDataBinding>(
         override fun getNewListSize(): Int = newList.size
         override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
         override fun areContentsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredList = ArrayList<T>()
+                if (constraint == null || constraint.isEmpty()) {
+                    filteredList.addAll(currentList)
+                } else {
+                    val filterPattern = constraint.toString().toLowerCase().trim()
+                    for (item in currentList) {
+                        if (item.toString().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item)
+                        }
+                    }
+                }
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                currentList.clear()
+                currentList.addAll(results?.values as ArrayList<T>)
+                notifyDataSetChanged()
+            }
+        }
     }
 }
 

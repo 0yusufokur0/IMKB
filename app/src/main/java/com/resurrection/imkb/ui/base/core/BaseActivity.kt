@@ -5,10 +5,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.resurrection.imkb.ui.base.AppSession
 
 import com.resurrection.imkb.ui.base.util.Constants
@@ -23,6 +20,10 @@ abstract class BaseActivity<VDB : ViewDataBinding,VM : ViewModel>
     lateinit var appSession: AppSession
 
     lateinit var binding: VDB
+
+    protected val viewModel by lazy {
+        ViewModelProvider(this).get(viewModelClass)
+    }
 
     abstract fun init(savedInstanceState: Bundle?)
 
