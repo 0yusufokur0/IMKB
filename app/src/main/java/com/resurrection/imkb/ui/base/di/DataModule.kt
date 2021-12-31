@@ -1,11 +1,9 @@
 package com.resurrection.imkb.ui.base.di
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.datastore.preferences.createDataStore
+import com.resurrection.imkb.ui.base.AppSession
 import com.resurrection.imkb.ui.base.data.DataHolderManager
-import com.resurrection.imkb.ui.base.data.DataStoreManager
 import com.resurrection.imkb.ui.base.data.SharedPreferencesManager
 import dagger.Module
 import dagger.Provides
@@ -24,13 +22,6 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideDataStoreManager(@ApplicationContext context: Context) = DataStoreManager(context.createDataStore(context.packageName))
+    fun provideAppSession(sharedPref: SharedPreferencesManager) = AppSession(Bundle(),sharedPref)
 
-    @Singleton
-    @Provides
-    fun provideDataHolderManager() = DataHolderManager(Bundle())
-
-    @Singleton
-    @Provides
-    fun provideAppSession(holder: DataHolderManager,pref: SharedPreferencesManager, store: DataStoreManager) = AppSession(holder,pref,store)
 }

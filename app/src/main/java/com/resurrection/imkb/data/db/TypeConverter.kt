@@ -5,8 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.resurrection.imkb.data.model.ServiceStatus
 import com.resurrection.imkb.data.model.imkb.Graphic
-import com.resurrection.imkb.ui.base.util.modelToString
-import com.resurrection.imkb.ui.base.util.stringToModel
 import java.lang.reflect.Type
 
 class TypeConverter {
@@ -18,4 +16,6 @@ class TypeConverter {
     fun fromDetailResponseStatusLangGson(value: List<Graphic>) = modelToString(value)
     @TypeConverter
     fun toDetailResponseLangList(value: String) = stringToModel<List<Graphic>>(value)
+    fun <T> stringToModel(value: String) = Gson().fromJson(value, object : TypeToken<T>() {}.type) as T
+    fun <T> modelToString(value: T) = Gson().toJson(value, object : TypeToken<T>() {}.type) as String
 }

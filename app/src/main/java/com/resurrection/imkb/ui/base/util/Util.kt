@@ -19,8 +19,7 @@ import com.resurrection.imkb.R
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-fun <T> stringToModel(value: String) = Gson().fromJson(value, object : TypeToken<T>() {}.type) as T
-fun <T> modelToString(value: T) = Gson().toJson(value, object : TypeToken<T>() {}.type) as String
+
 
 
 

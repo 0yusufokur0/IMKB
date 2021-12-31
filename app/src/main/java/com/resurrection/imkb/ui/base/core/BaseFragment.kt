@@ -9,7 +9,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import com.resurrection.imkb.ui.base.di.AppSession
+import com.resurrection.imkb.ui.base.AppSession
 import javax.inject.Inject
 
 
@@ -30,7 +30,6 @@ abstract class BaseFragment<VDB : ViewDataBinding>(@LayoutRes val resLayoutId:In
         savedInstanceState: Bundle?
     ): View? {
         _binding = DataBindingUtil.inflate(inflater, resLayoutId, container, false)
-        appSession.dataStore.lifecycleOwner = this
         return _binding!!.root
     }
 

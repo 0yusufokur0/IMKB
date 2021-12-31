@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.resurrection.imkb.ui.base.di.AppSession
+import com.resurrection.imkb.ui.base.AppSession
 
 import com.resurrection.imkb.ui.base.util.Constants
 import javax.inject.Inject
@@ -29,14 +29,13 @@ abstract class BaseActivity<VDB : ViewDataBinding,VM : ViewModel>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutRes)
-        appSession.dataStore.lifecycleOwner = this
         init(savedInstanceState)
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         when(event){
-            Lifecycle.Event.ON_START -> appSession.dataHolder.put(Constants.IS_APP_FOREGROUND, true)
-            Lifecycle.Event.ON_STOP -> appSession.dataHolder.put(Constants.IS_APP_FOREGROUND, false)
+            Lifecycle.Event.ON_START -> appSession.dataHolder.putBoolean(Constants.IS_APP_FOREGROUND, true)
+            Lifecycle.Event.ON_STOP -> appSession.dataHolder.putBoolean(Constants.IS_APP_FOREGROUND, false)
             else -> { }
         }
     }

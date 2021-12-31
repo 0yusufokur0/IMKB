@@ -33,10 +33,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
     private var tempList = arrayListOf<Stock>()
 
     override fun init(savedInstanceState: Bundle?) {
-          appSession.dataStore.get<HandshakeResponse>("handshakeResponse", HandshakeResponse::class.java){
-                    response = it
-          }
-
+          response = appSession.dataHolder.getSerializable("handshakeResponse") as HandshakeResponse?
 
         setHasOptionsMenu(true)
         setViewModelObserve()

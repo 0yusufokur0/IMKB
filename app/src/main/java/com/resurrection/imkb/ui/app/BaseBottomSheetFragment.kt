@@ -11,7 +11,8 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.resurrection.imkb.R
-import com.resurrection.imkb.ui.base.data.DataStoreManager
+import com.resurrection.imkb.ui.base.AppSession
+
 import javax.inject.Inject
 
 
@@ -19,7 +20,7 @@ abstract class BaseBottomSheetFragment<VDB : ViewDataBinding> : BottomSheetDialo
     LifecycleObserver {
 
     @Inject
-    lateinit var dataStoreManager: DataStoreManager
+    lateinit var appSession: AppSession
 
     private var _binding: VDB? = null
     val binding get() = _binding!!
@@ -46,7 +47,6 @@ abstract class BaseBottomSheetFragment<VDB : ViewDataBinding> : BottomSheetDialo
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dataStoreManager.lifecycleOwner = this
         init(savedInstanceState)
     }
 
