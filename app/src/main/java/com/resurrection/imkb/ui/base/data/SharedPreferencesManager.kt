@@ -3,8 +3,9 @@ package com.resurrection.imkb.ui.base.data
 import android.content.Context
 import android.os.Parcelable
 import java.io.Serializable
+import javax.inject.Inject
 
-class SharedPreferencesManager(context: Context) {
+class SharedPreferencesManager @Inject constructor(context: Context) {
     private val preferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
     private val editor = preferences.edit()
 

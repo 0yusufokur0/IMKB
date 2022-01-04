@@ -1,15 +1,33 @@
 package com.resurrection.imkb.ui.base.general
 
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-fun tryCatch(func:()->Unit){
+fun tryCatch(func: () -> Unit) {
     try {
         func()
-    }catch (e:Exception){
+    } catch (e: Exception) {
         ThrowableError(e.toString())
     }
 }
 
-class ThrowableError(msg:String):Throwable(msg){
-    init { Log.e("ThrowableError",msg) }
+@JvmName("tryCatch")
+fun <T> LifecycleOwner.tryCatch(func: suspend CoroutineScope.() -> T?): T? {
+    try {
+        var result: T? = null
+        this.lifecycleScope.launch { result = func() }
+        return result
+    } catch (e: Exception) {
+        ThrowableError(e.toString())
+    }
+    return null
+}
+
+class ThrowableError(msg: String) : Throwable(msg) {
+    init {
+        Log.e("ThrowableError", msg)
+    }
 }

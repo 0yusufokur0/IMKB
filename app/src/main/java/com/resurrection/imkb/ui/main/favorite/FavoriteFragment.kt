@@ -25,9 +25,8 @@ import com.resurrection.imkb.ui.base.general.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment_favorite) {
+class FavoriteFragment : BaseFragment<FragmentFavoriteBinding,FavoriteViewModel>(R.layout.fragment_favorite,FavoriteViewModel::class.java) {
     private var response: HandshakeResponse? = null
-    private val viewModel: FavoriteViewModel by viewModels()
     private var detailFragment: DetailFragment? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
     private var tempList = arrayListOf<Stock>()

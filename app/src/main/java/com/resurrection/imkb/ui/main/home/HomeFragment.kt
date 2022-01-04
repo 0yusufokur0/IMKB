@@ -34,10 +34,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
-
-    private val viewModel: HomeViewModel by viewModels()
-    private var stockPeriod = "all"
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.fragment_home,  HomeViewModel::class.java){
+    var stockPeriod = "all"
     private var detailFragment: DetailFragment? = null
     private var response: HandshakeResponse? = null
     private var stockAdapter: StockAdapter<Stock, StockItemBinding>? = null
