@@ -1,33 +1,43 @@
 package com.resurrection.imkb.ui.base.data
 
 import android.content.Context
-import android.os.Parcelable
-import java.io.Serializable
 import javax.inject.Inject
 
-class SharedPreferencesManager @Inject constructor(context: Context) {
-    private val preferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-    private val editor = preferences.edit()
+/**
+ * Created by Yusuf Okur on 01.04.2022
+ **/
+
+class SharedPreferencesManager @Inject constructor(context: Context) : StorageManager<Unit> {
+    val manager = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+    private val editor = manager.edit()
 
     fun remove(key: String) = editor.remove(key).apply()
-    fun clear() = editor.clear().apply()
+    fun size() = manager.all.size
+    fun isEmpty() = manager.all.isEmpty()
+    fun keySet() = manager.all.keys
+    fun contains(key: String) = manager.all.containsKey(key)
+    fun get(key: String) = manager.all[key]
 
-    fun putString(key: String, value: String) = editor.putString(key, value).apply()
-    fun getString(key: String, defaultValue: String) = preferences.getString(key, defaultValue)
 
-    fun putInt(key: String, value: Int) = editor.putInt(key, value).apply()
-    fun getInt(key: String, defaultValue: Int) = preferences.getInt(key, defaultValue)
+    override fun clearAll() = editor.clear().apply()
 
-    fun putBoolean(key: String, value: Boolean) = editor.putBoolean(key, value).apply()
-    fun getBoolean(key: String, defaultValue: Boolean) = preferences.getBoolean(key, defaultValue)
+    override fun putString(key: String, value: String) = editor.putString(key, value).apply()
+    override fun getString(key: String, defValue: String) = manager.getString(key, defValue)
 
-    fun putFloat(key: String, value: Float) = editor.putFloat(key, value).apply()
-    fun getFloat(key: String, defaultValue: Float) = preferences.getFloat(key, defaultValue)
+    override fun putInt(key: String, value: Int) = editor.putInt(key, value).apply()
+    override fun getInt(key: String, defValue: Int) = manager.getInt(key, defValue)
 
-    fun putLong(key: String, value: Long) = editor.putLong(key, value).apply()
-    fun getLong(key: String, defaultValue: Long) = preferences.getLong(key, defaultValue)
+    override fun putBoolean(key: String, value: Boolean) = editor.putBoolean(key, value).apply()
+    override fun getBoolean(key: String, defValue: Boolean) = manager.getBoolean(key, defValue)
 
-    fun putStringSet(key: String, value: Set<String>) = editor.putStringSet(key, value).apply()
-    fun getStringSet(key: String, defaultValue: Set<String>) = preferences.getStringSet(key, defaultValue)
+    override fun putFloat(key: String, value: Float) = editor.putFloat(key, value).apply()
+    override fun getFloat(key: String, defValue: Float) = manager.getFloat(key, defValue)
+
+    override fun putLong(key: String, value: Long) = editor.putLong(key, value).apply()
+    override fun getLong(key: String, defValue: Long) = manager.getLong(key, defValue)
+
+    override fun putDouble(key: String, value: Double) = editor.putString(key, value.toString()).apply()
+    override fun getDouble(key: String, defValue: Double) = manager.getString(key, defValue.toString())?.toDouble()
+
 
 }

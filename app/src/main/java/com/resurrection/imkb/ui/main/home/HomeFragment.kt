@@ -125,7 +125,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
                                 stockAdapter?.sortByItem(SYMBOL)
 
-                                   appSession.dataHolder.putSerializable("handshakeResponse",response)
+                                response?.let {
+                                    appSession.dataHolder.putSerializable("handshakeResponse", response!!)
+                                }
+
 
                             }
                         }
