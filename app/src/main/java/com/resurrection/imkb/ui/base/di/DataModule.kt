@@ -10,6 +10,7 @@ import com.resurrection.imkb.ui.base.AppSession
 import com.resurrection.imkb.ui.base.data.DataHolderManager
 import com.resurrection.imkb.ui.base.data.DataStoreManager
 import com.resurrection.imkb.ui.base.data.SharedPreferencesManager
+import com.resurrection.imkb.ui.base.general.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,7 +38,12 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideAppSession(dataHolder: DataHolderManager,sharedPref: SharedPreferencesManager,dataStore: DataStoreManager) =
-        AppSession(dataHolder,sharedPref,dataStore)
+    fun provideLogger() = Logger()
+
+    @Singleton
+    @Provides
+    fun provideAppSession(dataHolder: DataHolderManager,sharedPref: SharedPreferencesManager,dataStore: DataStoreManager,logger: Logger) =
+        AppSession(dataHolder,sharedPref,dataStore, logger)
+
 
 }

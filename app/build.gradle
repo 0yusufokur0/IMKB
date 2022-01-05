@@ -49,6 +49,9 @@ android {
 
 dependencies {
 
+    //Logger
+    implementation 'com.elvishew:xlog:1.11.0'
+
     // Constraint Layout
     implementation"com.android.support.constraint:constraint-layout:2.0.4"
 
@@ -147,8 +150,3 @@ dependencies {
       androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'*/
 
 }
-/*
-
-repositories {
-    mavenCentral()
-}*/
