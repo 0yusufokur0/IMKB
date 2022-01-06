@@ -19,10 +19,6 @@ import com.resurrection.imkb.R
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-
-
-
-
 fun isNetworkAvailable(context: Context): Boolean {
     try {
     val connectivityManager =

@@ -2,18 +2,32 @@ package com.resurrection.imkb.ui.base.general
 
 import android.annotation.SuppressLint
 import android.os.Environment
-import android.provider.Settings.Global.getString
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
+import com.elvishew.xlog.LogConfiguration
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.Logger
 import com.elvishew.xlog.XLog
-import com.resurrection.imkb.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import java.io.*
+import com.elvishew.xlog.flattener.DefaultFlattener
+import com.elvishew.xlog.formatter.border.DefaultBorderFormatter
+import com.elvishew.xlog.formatter.message.json.DefaultJsonFormatter
+import com.elvishew.xlog.formatter.message.throwable.DefaultThrowableFormatter
+import com.elvishew.xlog.formatter.message.xml.DefaultXmlFormatter
+import com.elvishew.xlog.formatter.stacktrace.DefaultStackTraceFormatter
+import com.elvishew.xlog.formatter.thread.DefaultThreadFormatter
+import com.elvishew.xlog.interceptor.BlacklistTagsFilterInterceptor
+import com.elvishew.xlog.printer.AndroidPrinter
+import com.elvishew.xlog.printer.ConsolePrinter
+import com.elvishew.xlog.printer.Printer
+import com.elvishew.xlog.printer.file.FilePrinter
+import com.elvishew.xlog.printer.file.backup.NeverBackupStrategy
+import com.elvishew.xlog.printer.file.clean.FileLastModifiedCleanStrategy
+import com.elvishew.xlog.printer.file.clean.NeverCleanStrategy
+import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator
+import com.elvishew.xlog.printer.file.writer.SimpleWriter
+import com.resurrection.imkb.BuildConfig
+import com.resurrection.imkb.ui.base.util.createFile
+import com.resurrection.imkb.ui.base.util.createFolder
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,52 +36,90 @@ class Logger {
     var lifecycleOwner: LifecycleOwner? = null
     private val logList = mutableListOf<String>()
     private val LOG_TAG = "AppLogger"
-    private val LIFECYCLE_TAG = "LifecycleLogger"
     private lateinit var xLogger: Logger
 
     // private val fragmentNameList = mutableListOf<String>()
     private var rootPath = "" + Environment.getExternalStorageDirectory().absolutePath
-
+    private var logPath = "" + Environment.getExternalStorageDirectory().absolutePath + "/IMKB/Logs"
 
     init {
-        XLog.init(LogLevel.ALL)
-        xLogger = XLog.tag(LOG_TAG).build()
 
+        xLogInit()
+        xLogger = XLog.tag(LOG_TAG).build()
 
         var dateTime = getDateTime()
 
         rootPath = createFolder(rootPath, "IMKB")
-        rootPath = createFolder(rootPath, "Log")
+        rootPath = createFolder(rootPath, "Logs")
         rootPath = createFolder(rootPath, getDateTime())
 
 
-        // check old log file and delete it
+        // TODO: get logPath size
+        /*      val file = File(logPath)
+              val size = file.length()
+              if (size > 1000000) {
+                  logPath = createFolder(rootPath, "Logs")
+                  logPath = createFolder(logPath, getDateTime())
+              }*/
+
     }
+
+    private fun xLogInit() {
+        val config = LogConfiguration.Builder()
+            .logLevel(if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE)
+            .tag(LOG_TAG)
+            .enableThreadInfo()
+            .enableStackTrace(2)
+            .enableBorder()
+            .jsonFormatter(DefaultJsonFormatter())
+            .xmlFormatter(DefaultXmlFormatter())
+            .throwableFormatter(DefaultThrowableFormatter())
+            .threadFormatter(DefaultThreadFormatter())
+            .stackTraceFormatter(DefaultStackTraceFormatter())
+            .borderFormatter(DefaultBorderFormatter())
+            .build()
+
+        val androidPrinter: Printer = AndroidPrinter(true)
+
+        val consolePrinter: Printer = ConsolePrinter()
+
+        val filePrinter: Printer =
+            FilePrinter.Builder("<path-to-logs-dir>")
+                .fileNameGenerator(DateFileNameGenerator())
+                .backupStrategy(NeverBackupStrategy())
+                .cleanStrategy(NeverCleanStrategy())
+                .flattener(DefaultFlattener())
+                .writer(SimpleWriter())
+                .build()
+
+        XLog.init(config, androidPrinter, consolePrinter, filePrinter)
+    }
+
 
     // region log
     fun d(message: String) {
         logList.add(message)
-        xLogger.d(LOG_TAG, message)
+        xLogger.d(message)
     }
 
     fun e(message: String) {
         logList.add(message)
-        xLogger.e(LOG_TAG, message)
+        xLogger.e(message)
     }
 
     fun i(message: String) {
         logList.add(message)
-        xLogger.i(LOG_TAG, message)
+        xLogger.i(message)
     }
 
     fun v(message: String) {
         logList.add(message)
-        xLogger.v(LOG_TAG, message)
+        xLogger.v(message)
     }
 
     fun w(message: String) {
         logList.add(message)
-        xLogger.w(LOG_TAG, message)
+        xLogger.w(message)
     }
 
     fun wtf(message: String) {
@@ -96,100 +148,19 @@ class Logger {
 
     fun activityOnDestroy(activityName: String) = this.d("Activity OnDestroy : $activityName")
     fun activityOnRestart(activityName: String) = this.d("Activity OnRestart : $activityName")
-
     // endregion
 
     // region Fragment lifecycle
     fun fragmentOnCreate(fragmentName: String) = logList.add("Fragment Create : $fragmentName")
-    fun fragmentOnCreateView(fragmentName: String) =
-        logList.add("Fragment OnCreateView : $fragmentName")
-
+    fun fragmentOnCreateView(fragmentName: String) = logList.add("Fragment OnCreateView : $fragmentName")
     fun fragmentOnStart(fragmentName: String) = this.d("Fragment OnStart : $fragmentName")
     fun fragmentOnResume(fragmentName: String) = this.d("Fragment OnResume : $fragmentName")
     fun fragmentOnPause(fragmentName: String) = this.d("Fragment OnPause : $fragmentName")
     fun fragmentOnStop(fragmentName: String) = this.d("Fragment OnStop : $fragmentName")
-    fun fragmentOnDestroyView(fragmentName: String) =
-        this.d("Fragment OnDestroyView : $fragmentName")
-
+    fun fragmentOnDestroyView(fragmentName: String) = this.d("Fragment OnDestroyView : $fragmentName")
     fun fragmentOnDestroy(fragmentName: String) = this.d("Fragment OnDestroy : $fragmentName")
     // endregion
 
-    private fun createFile(path: String, sFileName: String?, sBody: MutableList<String>) {
-        onlyTry {
-            val gpxfile = File(path, "$sFileName.txt")
-            val writer = FileWriter(gpxfile)
-            sBody.forEach {
-                writer.append(it + "\n")
-            }
-            writer.flush()
-            writer.close()
-        }
-    }
-
-
-/*    private fun writeLog(activityName: String) {
-        lifecycleOwner?.let {
-
-            lifecycleOwner!!.lifecycleScope.async(Dispatchers.IO) {
-
-                val file =
-                    File("" + Environment.getDataDirectory() + "my_apppp" + getDateTime() + "$activityName/$fragmentDir/log.txt")
-                BufferedWriter(file.outputStream().writer()).apply {
-                    logList.forEach {
-                        write(it)
-                        newLine()
-                    }
-                    close()
-                    logList.clear()
-                }
-            }
-        }
-    }*/
-
-    fun createFolder(rootPath: String, folderName: String): String {
-        val tempFile = File(rootPath, folderName)
-        return if (!tempFile.exists()) {
-            tempFile.mkdir()
-            "$rootPath/$folderName"
-        } else rootPath
-    }
-
-
-/*    fun save() {
-        val text: String = "asdasdasd"
-        var fos: FileOutputStream? = null
-        try {
-
-            val folderName = "myFolder/getmyasd/bash"
-            val path: String = this.getExternalFilesDir(null)?.absolutePath+""
-
-            File("$path/$folderName").mkdir()
-
-            fos = FileOutputStream("$path/$folderName/cc.txt")
-
-            fos.write(text.toByteArray())
-
-            Toast.makeText(
-                this, "Saved to $filesDir/$FILE_NAME",
-                Toast.LENGTH_LONG
-            ).show()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }*/
-
     @SuppressLint("SimpleDateFormat")
     private fun getDateTime() = SimpleDateFormat("dd_mm_yyyy-hh_mm_ss").format(Date())
-
-
 }

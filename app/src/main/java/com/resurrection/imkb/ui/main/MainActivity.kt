@@ -37,121 +37,18 @@ import java.io.*
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.activity_main,MainViewModel::class.java),
     NavigationBarView.OnItemSelectedListener {
 
-    private val FILE_NAME = "example.txt"
-    val path = Environment.DIRECTORY_DOCUMENTS
     lateinit var appBarConfiguration: AppBarConfiguration
     private var textChangedFun: ((String) -> Any?)? = null
     lateinit var navController: NavController
-
-
 
     override fun init(savedInstanceState: Bundle?) {
         setUpNavController()
         requestReadAndWritePermission()
 
-
-/*
-        createFile(getString(R.string.app_name),"asdasdasd.txt","asidlfıkgşsldhfşghsşdlfg")
-*/
-
         binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
             text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
         }
     }
-
-
-/*    private fun createFile(folderName:String,sFileName: String?, sBody: String?) {
-        onlyTry {
-            val file = File(Environment.getExternalStorageDirectory().absolutePath, folderName)
-            file.mkdirs()
-
-            val root = File(Environment.getExternalStorageDirectory().absolutePath, this.getString(R.string.app_name))
-            if (!root.exists())  root.mkdirs()
-
-            val gpxfile = File(root, sFileName)
-            val writer = FileWriter(gpxfile)
-            writer.append(sBody)
-            writer.flush()
-            writer.close()
-        }
-    }*/
-
-
-
-/*    @RequiresApi(Build.VERSION_CODES.N)
-    fun save() {
-        val text: String = "asdasdasd"
-        var fos: FileOutputStream? = null
-        onlyTry {
-
-            val folderName = "myFolder"
-
-            File("$path/$folderName").mkdir()
-
-
-            val directory = File(
-                Environment.getExternalStorageDirectory().toString() + "ffff"
-            )
-            if (!directory.exists()) Toast.makeText(
-                this,
-                if (directory.mkdirs()) "Directory has been created" else "Directory not created",
-                Toast.LENGTH_SHORT
-            ).show() else Toast.makeText(this, "Directory exists", Toast.LENGTH_SHORT)
-                .show()
-
-
-    *//*        fos = FileOutputStream("$path/xxxviii.txt")
-
-            fos?.write(text.toByteArray())
-
-            fos?.close()
-*//*
-*//*
-            toast("saved")
-*//*
-        }*/
-
-    /*fun createFile(path: String?) {
-        val sd_main = File(""+Environment.getExternalStorageDirectory()+"/yourlocation")
-        var success = true
-        if (!sd_main.exists())
-            success = sd_main.mkdir()
-
-        if (success) {
-            val sd = File("filename.txt")
-
-            if (!sd.exists())
-                success = sd.mkdir()
-
-            if (success) {
-                // directory exists or already created
-                val dest = File(sd, "filename.txt")
-                try {
-                    // response is the data written to file
-                    PrintWriter(dest).use { out -> out.println("response\nresponse\n sdf") }
-
-                } catch (e: Exception) {
-                    // handle the exception
-                    toast("dosya oluşturulamadı")
-                }
-            }
-            toast("oldu")
-        } else {
-            // directory creation is not successful
-            toast("Directory creation is not successful")
-        }
-
-        val HEADER = "ID, time, PSI1, PSI2, PSI3, speed1, speed2, temp1, temp2"
-        val filename = "export.csv"
-
-        var fileOutStream : FileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE)
-
-        try {
-            fileOutStream.write(HEADER.toByteArray())
-            fileOutStream.close()
-        }catch(e: Exception){
-        }*/
-
 
     private fun setUpNavController(){
         changeStatusBarColor(R.color.black)
