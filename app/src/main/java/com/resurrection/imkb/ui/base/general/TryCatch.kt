@@ -14,6 +14,15 @@ fun tryCatch(func: () -> Unit) {
     }
 }
 
+
+fun onlyTry(func: () -> Unit) {
+    try {
+        func()
+    } catch (e: Exception) {
+        ThrowableError(e.toString())
+    }
+}
+
 @JvmName("tryCatch")
 fun <T> LifecycleOwner.tryCatch(defaultValue: T?= null,func: suspend CoroutineScope.() -> T?): T? {
     try {

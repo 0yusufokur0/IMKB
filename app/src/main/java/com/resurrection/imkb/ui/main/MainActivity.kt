@@ -1,10 +1,12 @@
 package com.resurrection.imkb.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -23,13 +25,12 @@ import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivityMainBinding
 import com.resurrection.imkb.ui.base.core.BaseActivity
 import com.resurrection.imkb.ui.base.general.hideKeyboard
+import com.resurrection.imkb.ui.base.general.onlyTry
 import com.resurrection.imkb.ui.base.general.toast
+import com.resurrection.imkb.ui.base.general.tryCatch
 import com.resurrection.imkb.ui.base.util.changeStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 
 
 @AndroidEntryPoint
@@ -37,66 +38,78 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.a
     NavigationBarView.OnItemSelectedListener {
 
     private val FILE_NAME = "example.txt"
-
+    val path = Environment.DIRECTORY_DOCUMENTS
     lateinit var appBarConfiguration: AppBarConfiguration
     private var textChangedFun: ((String) -> Any?)? = null
     lateinit var navController: NavController
 
-    @RequiresApi(Build.VERSION_CODES.N)
+
+
     override fun init(savedInstanceState: Bundle?) {
         setUpNavController()
         requestReadAndWritePermission()
 
-        val path: String = this.packageManager.getPackageInfo(this.packageName, 0).applicationInfo.dataDir;
 
-        println(path)
-        println( Environment.getExternalStorageDirectory().absolutePath)
-        //createFile("imkb.txt")
+/*
+        createFile(getString(R.string.app_name),"asdasdasd.txt","asidlfıkgşsldhfşghsşdlfg")
+*/
 
-
-        println("-------------")
-        println(Environment.getDataDirectory())
         binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
             text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
         }
     }
 
 
+/*    private fun createFile(folderName:String,sFileName: String?, sBody: String?) {
+        onlyTry {
+            val file = File(Environment.getExternalStorageDirectory().absolutePath, folderName)
+            file.mkdirs()
 
-    @RequiresApi(Build.VERSION_CODES.N)
+            val root = File(Environment.getExternalStorageDirectory().absolutePath, this.getString(R.string.app_name))
+            if (!root.exists())  root.mkdirs()
+
+            val gpxfile = File(root, sFileName)
+            val writer = FileWriter(gpxfile)
+            writer.append(sBody)
+            writer.flush()
+            writer.close()
+        }
+    }*/
+
+
+
+/*    @RequiresApi(Build.VERSION_CODES.N)
     fun save() {
         val text: String = "asdasdasd"
         var fos: FileOutputStream? = null
-        try {
+        onlyTry {
 
             val folderName = "myFolder"
-            val path: String = this.packageManager.getPackageInfo(this.packageName, 0).applicationInfo.dataDir;
 
             File("$path/$folderName").mkdir()
 
-            fos = FileOutputStream("$path$folderName+xxxviii.txt")
 
-            fos.write(text.toByteArray())
+            val directory = File(
+                Environment.getExternalStorageDirectory().toString() + "ffff"
+            )
+            if (!directory.exists()) Toast.makeText(
+                this,
+                if (directory.mkdirs()) "Directory has been created" else "Directory not created",
+                Toast.LENGTH_SHORT
+            ).show() else Toast.makeText(this, "Directory exists", Toast.LENGTH_SHORT)
+                .show()
 
-            Toast.makeText(
-                this, "Saved to $filesDir/$FILE_NAME",
-                Toast.LENGTH_LONG
-            ).show()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
 
+    *//*        fos = FileOutputStream("$path/xxxviii.txt")
+
+            fos?.write(text.toByteArray())
+
+            fos?.close()
+*//*
+*//*
+            toast("saved")
+*//*
+        }*/
 
     /*fun createFile(path: String?) {
         val sd_main = File(""+Environment.getExternalStorageDirectory()+"/yourlocation")
@@ -137,8 +150,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.a
             fileOutStream.write(HEADER.toByteArray())
             fileOutStream.close()
         }catch(e: Exception){
-        }
-    }*/
+        }*/
+
 
     private fun setUpNavController(){
         changeStatusBarColor(R.color.black)
@@ -206,7 +219,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.a
             requestPermissions(
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 ),
                 1
             )

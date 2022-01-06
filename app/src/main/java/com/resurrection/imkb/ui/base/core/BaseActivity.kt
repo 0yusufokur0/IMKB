@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.resurrection.imkb.ui.base.AppSession
+import com.resurrection.imkb.ui.base.general.toast
 import com.resurrection.imkb.ui.base.util.Constants
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -38,44 +39,44 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : ViewModel>
         lifecycleScope.launch {
             runBlocking {
                 appSession.lifecycleOwner = this@BaseActivity
-                binding = DataBindingUtil.setContentView(this@BaseActivity, layoutRes)
-                appSession.logger.activityOnCreate(viewModelClass.simpleName)
+                appSession.logger.activityOnCreate(this@BaseActivity.localClassName)
             }
         }
+        binding = DataBindingUtil.setContentView(this@BaseActivity, layoutRes)
         init(savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
         appSession.dataHolder.putBoolean(Constants.IS_APP_FOREGROUND, true)
-        appSession.logger.activityOnStart(viewModelClass.simpleName)
+        appSession.logger.activityOnStart(this@BaseActivity.localClassName)
 
     }
 
     override fun onResume() {
         super.onResume()
-        appSession.logger.activityOnResume(viewModelClass.simpleName)
+        appSession.logger.activityOnResume(this@BaseActivity.localClassName)
     }
 
     override fun onPause() {
         super.onPause()
-        appSession.logger.activityOnPause(viewModelClass.simpleName)
+        appSession.logger.activityOnPause(this@BaseActivity.localClassName)
     }
 
     override fun onStop() {
         super.onStop()
         appSession.dataHolder.putBoolean(Constants.IS_APP_FOREGROUND, false)
-        appSession.logger.activityOnStop(viewModelClass.simpleName)
+        appSession.logger.activityOnStop(this@BaseActivity.localClassName)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        appSession.logger.activityOnDestroy(viewModelClass.simpleName)
+        appSession.logger.activityOnDestroy(this@BaseActivity.localClassName)
     }
 
     override fun onRestart() {
         super.onRestart()
-        appSession.logger.activityOnRestart(viewModelClass.simpleName)
+        appSession.logger.activityOnRestart(this@BaseActivity.localClassName)
     }
 
 

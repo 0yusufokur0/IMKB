@@ -2,12 +2,15 @@ package com.resurrection.imkb.ui.base.general
 
 import android.annotation.SuppressLint
 import android.os.Environment
+import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.elvishew.xlog.LogLevel
+import com.elvishew.xlog.Logger
 import com.elvishew.xlog.XLog
+import com.resurrection.imkb.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.io.*
@@ -20,37 +23,51 @@ class Logger {
     private val logList = mutableListOf<String>()
     private val LOG_TAG = "AppLogger"
     private val LIFECYCLE_TAG = "LifecycleLogger"
-    private var activityName = ""
-    private val fragmentNameList = mutableListOf<String>()
+    private lateinit var xLogger: Logger
+
+    // private val fragmentNameList = mutableListOf<String>()
+    private var rootPath = "" + Environment.getExternalStorageDirectory().absolutePath
+
 
     init {
         XLog.init(LogLevel.ALL)
+        xLogger = XLog.tag(LOG_TAG).build()
+
+
+        var dateTime = getDateTime()
+
+        rootPath = createFolder(rootPath, "IMKB")
+        rootPath = createFolder(rootPath, "Log")
+        rootPath = createFolder(rootPath, getDateTime())
+
+
         // check old log file and delete it
     }
 
+    // region log
     fun d(message: String) {
         logList.add(message)
-        XLog.d(LOG_TAG, message)
+        xLogger.d(LOG_TAG, message)
     }
 
     fun e(message: String) {
         logList.add(message)
-        XLog.e(LOG_TAG, message)
+        xLogger.e(LOG_TAG, message)
     }
 
     fun i(message: String) {
         logList.add(message)
-        XLog.i(LOG_TAG, message)
+        xLogger.i(LOG_TAG, message)
     }
 
     fun v(message: String) {
         logList.add(message)
-        XLog.v(LOG_TAG, message)
+        xLogger.v(LOG_TAG, message)
     }
 
     fun w(message: String) {
         logList.add(message)
-        XLog.w(LOG_TAG, message)
+        xLogger.w(LOG_TAG, message)
     }
 
     fun wtf(message: String) {
@@ -60,53 +77,60 @@ class Logger {
 
     fun getLogList() = logList
     fun clearLogList() = logList.clear()
-
+    // endregion
 
     // region Activity lifecycle
     fun activityOnCreate(activityName: String) {
-        XLog.d(LIFECYCLE_TAG, "Activity Create : $activityName")
-        this.activityName = activityName
+        this.d("Activity Create : $activityName")
+        createFolder(rootPath, activityName)
     }
 
-    fun activityOnStart(activityName: String) = XLog.d(LIFECYCLE_TAG, "Activity OnStart : $activityName")
-    fun activityOnResume(activityName: String) = XLog.d(LIFECYCLE_TAG, "Activity OnResume : $activityName")
-    fun activityOnPause(activityName: String) = XLog.d(LIFECYCLE_TAG, "Activity OnPause : $activityName")
-    fun activityOnStop(activityName: String) = XLog.d(LIFECYCLE_TAG, "Activity OnStop : $activityName")
-    fun activityOnDestroy(activityName: String) {
-        XLog.d(LIFECYCLE_TAG, "Activity OnDestroy : $activityName")
+    fun activityOnStart(activityName: String) = this.d("Activity OnStart : $activityName")
+    fun activityOnResume(activityName: String) = this.d("Activity OnResume : $activityName")
+    fun activityOnPause(activityName: String) = this.d("Activity OnPause : $activityName")
+    fun activityOnStop(activityName: String) {
+        this.d("Activity OnStop : $activityName")
+        createFile("$rootPath/$activityName", "Log", logList)
+        logList.clear()
     }
 
-    fun activityOnRestart(activityName: String) = XLog.d(LIFECYCLE_TAG, "Activity OnRestart : $activityName")
+    fun activityOnDestroy(activityName: String) = this.d("Activity OnDestroy : $activityName")
+    fun activityOnRestart(activityName: String) = this.d("Activity OnRestart : $activityName")
+
     // endregion
 
     // region Fragment lifecycle
-    fun fragmentOnCreate(fragmentName: String) = XLog.d(LIFECYCLE_TAG, "Fragment Create : $fragmentName")
-    fun fragmentOnCreateView(fragmentName: String) {
-        XLog.d(LIFECYCLE_TAG, "Fragment OnCreateView : $fragmentName")
-        fragmentNameList.add(fragmentName)
-    }
+    fun fragmentOnCreate(fragmentName: String) = logList.add("Fragment Create : $fragmentName")
+    fun fragmentOnCreateView(fragmentName: String) =
+        logList.add("Fragment OnCreateView : $fragmentName")
 
-    fun fragmentOnStart(fragmentName: String) = XLog.d(LIFECYCLE_TAG, "Fragment OnStart : $fragmentName")
-    fun fragmentOnResume(fragmentName: String) = XLog.d(LIFECYCLE_TAG, "Fragment OnResume : $fragmentName")
-    fun fragmentOnPause(fragmentName: String) = XLog.d(LIFECYCLE_TAG, "Fragment OnPause : $fragmentName")
-    fun fragmentOnStop(fragmentName: String) = XLog.d(LIFECYCLE_TAG, "Fragment OnStop : $fragmentName")
-    fun fragmentOnDestroyView(fragmentName: String) {
-        XLog.d(LIFECYCLE_TAG, "Fragment OnDestroyView : $fragmentName")
-        writeLog(activityName)
-        fragmentNameList.remove(fragmentName)
-    }
+    fun fragmentOnStart(fragmentName: String) = this.d("Fragment OnStart : $fragmentName")
+    fun fragmentOnResume(fragmentName: String) = this.d("Fragment OnResume : $fragmentName")
+    fun fragmentOnPause(fragmentName: String) = this.d("Fragment OnPause : $fragmentName")
+    fun fragmentOnStop(fragmentName: String) = this.d("Fragment OnStop : $fragmentName")
+    fun fragmentOnDestroyView(fragmentName: String) =
+        this.d("Fragment OnDestroyView : $fragmentName")
 
-    fun fragmentOnDestroy(fragmentName: String) = XLog.d(LIFECYCLE_TAG, "Fragment OnDestroy : $fragmentName")
+    fun fragmentOnDestroy(fragmentName: String) = this.d("Fragment OnDestroy : $fragmentName")
     // endregion
 
+    private fun createFile(path: String, sFileName: String?, sBody: MutableList<String>) {
+        onlyTry {
+            val gpxfile = File(path, "$sFileName.txt")
+            val writer = FileWriter(gpxfile)
+            sBody.forEach {
+                writer.append(it + "\n")
+            }
+            writer.flush()
+            writer.close()
+        }
+    }
 
-    private fun writeLog(activityName: String) {
+
+/*    private fun writeLog(activityName: String) {
         lifecycleOwner?.let {
 
             lifecycleOwner!!.lifecycleScope.async(Dispatchers.IO) {
-                var fragmentDir = ""
-
-                fragmentNameList.forEach { fragmentDir += "$it/" }
 
                 val file =
                     File("" + Environment.getDataDirectory() + "my_apppp" + getDateTime() + "$activityName/$fragmentDir/log.txt")
@@ -120,7 +144,16 @@ class Logger {
                 }
             }
         }
+    }*/
+
+    fun createFolder(rootPath: String, folderName: String): String {
+        val tempFile = File(rootPath, folderName)
+        return if (!tempFile.exists()) {
+            tempFile.mkdir()
+            "$rootPath/$folderName"
+        } else rootPath
     }
+
 
 /*    fun save() {
         val text: String = "asdasdasd"

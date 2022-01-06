@@ -20,6 +20,8 @@ abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
     (@LayoutRes val resLayoutId:Int, private val viewModelClass: Class<VM>
 ) : Fragment() {
 
+    private var fragmentName = this.javaClass.simpleName
+
     @Inject
     lateinit var appSession: AppSession
 
@@ -32,7 +34,7 @@ abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appSession.logger.fragmentOnCreate(viewModelClass.simpleName)
+        appSession.logger.fragmentOnCreate(fragmentName)
     }
 
     @CallSuper
@@ -43,7 +45,7 @@ abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
     ): View? {
         appSession.lifecycleOwner = viewLifecycleOwner
         _binding = DataBindingUtil.inflate(inflater, resLayoutId, container, false)
-        appSession.logger.fragmentOnCreateView(viewModelClass.simpleName)
+        appSession.logger.fragmentOnCreateView(fragmentName)
         return _binding!!.root
     }
 
@@ -55,34 +57,34 @@ abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
 
     override fun onStart() {
         super.onStart()
-        appSession.logger.fragmentOnStart(viewModelClass.simpleName)
+        appSession.logger.fragmentOnStart(fragmentName)
     }
 
     override fun onResume() {
         super.onResume()
-        appSession.logger.fragmentOnResume(viewModelClass.simpleName)
+        appSession.logger.fragmentOnResume(fragmentName)
     }
 
     override fun onPause() {
         super.onPause()
-        appSession.logger.fragmentOnPause(viewModelClass.simpleName)
+        appSession.logger.fragmentOnPause(fragmentName)
     }
 
     override fun onStop() {
         super.onStop()
-        appSession.logger.fragmentOnStop(viewModelClass.simpleName)
+        appSession.logger.fragmentOnStop(fragmentName)
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
-        appSession.logger.fragmentOnDestroyView(viewModelClass.simpleName)
+        appSession.logger.fragmentOnDestroyView(fragmentName)
         _binding = null
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        appSession.logger.fragmentOnDestroy(viewModelClass.simpleName)
+        appSession.logger.fragmentOnDestroy(fragmentName)
     }
 }
