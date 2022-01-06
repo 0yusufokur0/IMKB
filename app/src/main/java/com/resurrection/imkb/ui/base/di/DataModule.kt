@@ -3,12 +3,10 @@ package com.resurrection.imkb.ui.base.di
 import android.content.Context
 import android.os.Bundle
 import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.resurrection.imkb.ui.base.AppSession
 import com.resurrection.imkb.ui.base.data.DataHolderManager
-import com.resurrection.imkb.ui.base.data.DataStoreManager
 import com.resurrection.imkb.ui.base.data.SharedPreferencesManager
 import com.resurrection.imkb.ui.base.general.Logger
 import dagger.Module
@@ -34,16 +32,12 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideDataStoreManager(@ApplicationContext context: Context) = DataStoreManager(context.dataStore)
-
-    @Singleton
-    @Provides
     fun provideLogger() = Logger()
 
     @Singleton
     @Provides
-    fun provideAppSession(dataHolder: DataHolderManager,sharedPref: SharedPreferencesManager,dataStore: DataStoreManager,logger: Logger) =
-        AppSession(dataHolder,sharedPref,dataStore, logger)
+    fun provideAppSession(dataHolder: DataHolderManager,sharedPref: SharedPreferencesManager,logger: Logger) =
+        AppSession(dataHolder,sharedPref,logger)
 
 
 }

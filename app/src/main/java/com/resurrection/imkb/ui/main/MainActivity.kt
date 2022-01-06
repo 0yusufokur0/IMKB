@@ -1,17 +1,13 @@
 package com.resurrection.imkb.ui.main
 
 import android.Manifest
-import android.content.Context
-import android.content.ContextWrapper
-import android.os.Build
+import android.Manifest.permission
+import android.app.Activity
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -25,12 +21,9 @@ import com.resurrection.imkb.R
 import com.resurrection.imkb.databinding.ActivityMainBinding
 import com.resurrection.imkb.ui.base.core.BaseActivity
 import com.resurrection.imkb.ui.base.general.hideKeyboard
-import com.resurrection.imkb.ui.base.general.onlyTry
-import com.resurrection.imkb.ui.base.general.toast
-import com.resurrection.imkb.ui.base.general.tryCatch
+import com.resurrection.imkb.ui.base.general.toastLong
 import com.resurrection.imkb.ui.base.util.changeStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.*
 
 
 @AndroidEntryPoint
@@ -43,11 +36,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.a
 
     override fun init(savedInstanceState: Bundle?) {
         setUpNavController()
-        requestReadAndWritePermission()
-
+        requestPermission(arrayOf(permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE,),1)
         binding.toolbarTextView.doOnTextChanged { text, start, count, after ->
             text?.let { textChangedFun?.let { it(binding.toolbarTextView.text.toString()) } }
         }
+
     }
 
     private fun setUpNavController(){
@@ -109,21 +102,4 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(R.layout.a
         super.onBackPressed()
         finishAffinity()
     }
-
-    // request read and write permission
-    fun requestReadAndWritePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(
-                arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                ),
-                1
-            )
-        }
-    }
-
-
-
-
 }

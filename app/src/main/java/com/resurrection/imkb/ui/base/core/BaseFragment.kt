@@ -11,24 +11,25 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.resurrection.imkb.ui.base.AppSession
 import com.resurrection.imkb.ui.base.general.toast
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
-abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
-    (@LayoutRes val resLayoutId:Int, private val viewModelClass: Class<VM>
+abstract class BaseFragment<VDB : ViewDataBinding, VM : ViewModel>
+    (
+    @LayoutRes val resLayoutId: Int, private val viewModelClass: Class<VM>
 ) : Fragment() {
-
-    private var fragmentName = this.javaClass.simpleName
 
     @Inject
     lateinit var appSession: AppSession
-
     private var _binding: VDB? = null
     val binding get() = _binding!!
-
     protected val viewModel by lazy { ViewModelProvider(this).get(viewModelClass) }
+    private var fragmentName = this.javaClass.simpleName
 
     abstract fun init(savedInstanceState: Bundle?)
 
@@ -43,18 +44,19 @@ abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        appSession.lifecycleOwner = viewLifecycleOwner
-        _binding = DataBindingUtil.inflate(inflater, resLayoutId, container, false)
         appSession.logger.fragmentOnCreateView(fragmentName)
+        _binding = DataBindingUtil.inflate(inflater, resLayoutId, container, false)
         return _binding!!.root
     }
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init(savedInstanceState)
+            init(savedInstanceState)
+
     }
 
+    // region LifeCycle
     override fun onStart() {
         super.onStart()
         appSession.logger.fragmentOnStart(fragmentName)
@@ -80,11 +82,11 @@ abstract class BaseFragment<VDB : ViewDataBinding,VM:ViewModel>
         super.onDestroyView()
         appSession.logger.fragmentOnDestroyView(fragmentName)
         _binding = null
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         appSession.logger.fragmentOnDestroy(fragmentName)
     }
+    // endregion
 }
